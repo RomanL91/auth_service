@@ -8,7 +8,7 @@ app = FastAPI()
 
 @app.get("/")
 async def start_test():
-    return {'message': "1, 2, 3 Start!"}
+    return {"message": "1, 2, 3 Start!"}
 
 
 if __name__ == "__main__":
