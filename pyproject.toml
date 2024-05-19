@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = ["RomanL91 <dev_roman91@mail.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fastapi = "^0.111.0"
+pydantic-settings = "^2.2.1"
+alembic = "^1.13.1"
+aiosqlite = "^0.20.0"
+uvicorn = {extras = ["standard"], version = "^0.29.0"}
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.30"}
+black = "^24.4.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
