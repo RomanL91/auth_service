@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 from core.DB_manager import db_manager
 
+from auth_user_app.auth_user_repository import UserRepository
+
 
 class IUnitOfWork(ABC):
 
@@ -28,6 +30,7 @@ class UnitOfWork:
     async def __aenter__(self):
         self.session = self.session_factory()
         # для работы
+        self.user = UserRepository(self.session)
 
     async def __aexit__(self, *args):
         await self.session.close()
