@@ -37,4 +37,4 @@ class DataBaseManager:
         await session.close()
 
 
-db_manager = DataBaseManager(url=settings.db_url, echo=settings.db_echo)
+db_manager = DataBaseManager(url=settings.db.url, echo=settings.db.echo)
