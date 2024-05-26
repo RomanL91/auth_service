@@ -43,3 +43,13 @@ class UpdateUserPartialSchema(BaseModel):
 
     email: EmailStr | None = None
     active: bool | None = None
+
+
+class MSGUserErrorSchema(BaseModel):
+    status_code: int
+    message: str
+
+
+class JWT(BaseModel):
+    token_type: str
+    access_token: str
