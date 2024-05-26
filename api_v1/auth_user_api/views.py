@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Response, HTTPException, Form, status
 
 from auth_user_app import schemas
 from auth_user_app.auth_user_service import UserService
@@ -10,10 +10,21 @@ router = APIRouter(tags=["Users"])
 
 
 @router.post(
-    "/", response_model=schemas.ReadUserSchema, status_code=status.HTTP_201_CREATED
+    "/",
+    response_model=schemas.ReadUserSchema | schemas.MSGUserErrorSchema,
+    status_code=status.HTTP_201_CREATED,
 )
-async def create_user(new_user: schemas.CreateUserSchema, uow: UOF_Depends):
-    return await UserService().create_user(uow=uow, new_user=new_user)
+async def create_user(
+    new_user: schemas.CreateUserSchema, uow: UOF_Depends, response: Response
+):
+    try:
+        return await UserService().create_user(uow=uow, new_user=new_user)
+    except HTTPException as error:
+        response.status_code = error.status_code
+        response_msg = schemas.MSGUserErrorSchema(
+            status_code=error.status_code, message=error.detail
+        )
+        return response_msg
 
 
 @router.get("/", response_model=list[schemas.ReadUserSchema])
@@ -51,3 +62,11 @@ async def update_user(
 @router.delete("/{user_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user(uow: UOF_Depends, user_id: int) -> None:
     await UserService().delete_user(uow=uow, user_id=user_id)
+
+
+@router.post("/login/", response_model=schemas.JWT)
+async def issue_jwt(uow: UOF_Depends, user_name: str = Form(), password: str = Form()):
+    jwt = await UserService().validate_user(
+        uow=uow, user_name=user_name, password=password
+    )
+    return jwt
