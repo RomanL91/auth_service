@@ -103,7 +103,7 @@ class JWTService:
     def encode_jwt(self, payload: dict, algorithm: str = None) -> str:
         algorithm = algorithm or self.algorithm
         # TODO работа со временем
-        now = datetime.now() 
+        now = datetime.now(settings.auth_jwt.timezone) 
         expire = now + timedelta(minutes=self.token_expire)
         payload.update(exp=expire, iat=now)
         return jwt.encode(payload=payload, key=self.private_key, algorithm=algorithm)

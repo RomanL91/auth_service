@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Response, HTTPException, Form, status
+from typing import Annotated
+
+from fastapi import APIRouter, Response, Depends, HTTPException, Form, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from auth_user_app import schemas
 from auth_user_app.auth_user_service import UserService
@@ -7,6 +10,8 @@ from api_v1.auth_user_api.dependencies import UOF_Depends
 
 
 router = APIRouter(tags=["Users"])
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token/")
 
 
 @router.post(
@@ -64,9 +69,20 @@ async def delete_user(uow: UOF_Depends, user_id: int) -> None:
     await UserService().delete_user(uow=uow, user_id=user_id)
 
 
-@router.post("/login/", response_model=schemas.JWT)
-async def issue_jwt(uow: UOF_Depends, user_name: str = Form(), password: str = Form()):
+# @router.post("/login/", response_model=schemas.JWT)
+# async def issue_jwt(uow: UOF_Depends, user_name: str = Form(), password: str = Form()):
+#     jwt = await UserService().validate_user(
+#         uow=uow, user_name=user_name, password=password
+#     )
+#     return jwt
+
+
+@router.post("/token/", response_model=schemas.JWT)
+async def issue_jwt(
+    uow: UOF_Depends, 
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+):
     jwt = await UserService().validate_user(
-        uow=uow, user_name=user_name, password=password
+        uow=uow, user_name=form_data.username, password=form_data.password
     )
     return jwt

@@ -1,3 +1,5 @@
+from pytz import timezone as tz
+
 from pathlib import Path
 
 from pydantic import BaseModel
@@ -11,7 +13,12 @@ class SettingsAuth(BaseModel):
     private_key_path: Path = BASE_DIR / "certs" / "private.pem"
     public_key_path: Path = BASE_DIR / "certs" / "public.pem"
     algoritm: str = "RS256"
+    token_type = "Bearer"
+    access_token_type = "access"
+    refresh_token_type = "refresh"
     access_token_expire: int = 5
+    refresh_token_expire: int = 60 * 24 * 30 # 30 days
+    timezone: tz = tz('Asia/Almaty')
 
 
 class SettingsDataBase(BaseModel):
