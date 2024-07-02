@@ -53,3 +53,8 @@ class MSGUserErrorSchema(BaseModel):
 class JWT(BaseModel):
     token_type: str
     access_token: str
+    refresh_token: str | None = None
+
+
+class RefreshRequestJWT(BaseModel):
+    refresh_token: str
