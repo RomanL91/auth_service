@@ -7,7 +7,7 @@ from auth_user_app.schemas import (
     UpdateUserPartialSchema,
     JWT,
 )
-from core import settings
+from core.settings import SettingsAuth
 
 # == Exceptions
 from sqlalchemy.exc import IntegrityError, NoResultFound
@@ -19,7 +19,6 @@ import bcrypt
 # == jwt for create jwt-token
 import jwt
 from datetime import datetime, timedelta
-
 
 
 class UserService:
@@ -87,35 +86,65 @@ class UserService:
                 raise error_403
         if not self.check_password(password=password, hashed_password=user.password):
             raise error_403
-        token = jwt_service.encode_jwt(payload={"user_id": user.id})
-        return JWT(token_type="Bearer", access_token=token)
+        access_token = jwt_service.encode_jwt(
+            payload={
+                "user_id": user.id,
+                jwt_service.token_type_field: jwt_service.access_token_type,
+            }
+        )
+        refresh_token = jwt_service.encode_jwt(
+            payload={
+                "user_id": user.id,
+                jwt_service.token_type_field: jwt_service.refresh_token_type,
+            }
+        )
+        return JWT(
+            token_type=jwt_service.token_type,
+            access_token=access_token,
+            refresh_token=refresh_token,
+        )
 
 
 class JWTService:
-    def __init__(
-        self, private_key: str, public_key: str, algorithm: str, token_expire: int
-    ):
-        self.private_key = private_key
-        self.public_key = public_key
-        self.algorithm = algorithm
-        self.token_expire = token_expire
+    def __init__(self, settings: SettingsAuth):
+        # super() ?? TODO
+        self.private_key = settings.private_key_path.read_text()
+        self.public_key = settings.public_key_path.read_text()
+        self.algorithm = settings.algorithm
+        self.access_token_expire = settings.access_token_expire
+        self.refresh_token_expire = settings.refresh_token_expire
+        self.timezone = settings.timezone
+        self.token_type = settings.token_type
+        self.token_type_field = settings.token_type_field
+        self.access_token_type = settings.access_token_type
+        self.refresh_token_type = settings.refresh_token_type
 
-    def encode_jwt(self, payload: dict, algorithm: str = None) -> str:
-        algorithm = algorithm or self.algorithm
-        # TODO работа со временем
-        now = datetime.now(settings.auth_jwt.timezone) 
-        expire = now + timedelta(minutes=self.token_expire)
+    def encode_jwt(self, payload: dict) -> str:
+        now = datetime.now(self.timezone)
+        expire = now + timedelta(minutes=self.access_token_expire)
+        if self.refresh_token_type in payload.values():
+            expire = now + timedelta(minutes=self.refresh_token_expire)
         payload.update(exp=expire, iat=now)
-        return jwt.encode(payload=payload, key=self.private_key, algorithm=algorithm)
+        return jwt.encode(
+            payload=payload, key=self.private_key, algorithm=self.algorithm
+        )
 
-    def decode_jwt(self, jwt_key: str | bytes, algorithm: str = None) -> dict:
-        algorithm = algorithm or self.algorithm
-        return jwt.decode(jwt=jwt_key, key=self.public_key, algorithms=[algorithm])
+    def decode_jwt(self, jwt_key: str) -> dict:
+        # TODO Пересмотреть обработку исключений
+        # return jwt.decode(jwt_key, key=self.public_key, algorithms=[self.algorithm])
+        try:
+            return jwt.decode(jwt_key, key=self.public_key, algorithms=[self.algorithm])
+        except jwt.ExpiredSignatureError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired"
+            )
+        except jwt.InvalidTokenError as e:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
+        except Exception as e:
+            # Для любых других JWT ошибок
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid JWT token"
+            )
 
 
-jwt_service = JWTService(
-    private_key=settings.auth_jwt.private_key_path.read_text(),
-    public_key=settings.auth_jwt.public_key_path.read_text(),
-    algorithm=settings.auth_jwt.algoritm,
-    token_expire=settings.auth_jwt.access_token_expire,
-)
+jwt_service = JWTService(settings=SettingsAuth())
