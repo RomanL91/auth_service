@@ -79,10 +79,35 @@ async def delete_user(uow: UOF_Depends, user_id: int) -> None:
 
 @router.post("/token/", response_model=schemas.JWT)
 async def issue_jwt(
-    uow: UOF_Depends, 
+    uow: UOF_Depends,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ):
     jwt = await UserService().validate_user(
         uow=uow, user_name=form_data.username, password=form_data.password
     )
     return jwt
+
+
+from auth_user_app.auth_user_service import jwt_service
+# TODO можно вынести эту логику в UserService по подобию issue_jwt
+@router.post("/refresh/", response_model=schemas.JWT, response_model_exclude_none=True)
+async def refresh_jwt(refresh_token: schemas.RefreshRequestJWT):
+    payload = jwt_service.decode_jwt(refresh_token.refresh_token)
+    token_type = payload.get(jwt_service.token_type_field, "")
+    if token_type != jwt_service.refresh_token_type:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid JWT token",
+        )
+    user_id = payload.get("user_id", 0)
+    access_token = jwt_service.encode_jwt(
+        payload={
+            "user_id": user_id,
+            jwt_service.token_type_field: jwt_service.access_token_type,
+        }
+    )
+    return schemas.JWT(
+        token_type=jwt_service.token_type,
+        access_token=access_token,
+        # refresh_token=refresh_token
+    )
