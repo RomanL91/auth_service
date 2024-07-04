@@ -1,6 +1,6 @@
 from typing import Annotated
 from annotated_types import MinLen, MaxLen
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict, HttpUrl
 
 
 # ====================================================
@@ -15,6 +15,7 @@ class CreateUserSchema(BaseModel):
     username: Annotated[str, MinLen(3), MaxLen(20)]
     password: Annotated[str, MinLen(4), MaxLen(20)]
     email: EmailStr
+    external_id: str | None = None
 
 
 class ReadUserSchema(BaseModel):
@@ -58,3 +59,13 @@ class JWT(BaseModel):
 
 class RefreshRequestJWT(BaseModel):
     refresh_token: str
+
+
+class GoogleUserInfo(BaseModel):
+    id: str
+    email: EmailStr
+    verified_email: bool
+    name: str
+    given_name: str
+    family_name: str
+    picture: HttpUrl
