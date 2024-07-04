@@ -11,6 +11,8 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(), nullable=True)
     active: Mapped[bool] = mapped_column(Boolean(), default=True)
 
+    external_id: Mapped[str] = mapped_column(String(50), nullable=True)
+
     def __str__(self):
         return f"id={self.id}, username={self.username!r})"
 
