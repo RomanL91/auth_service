@@ -4,6 +4,7 @@ from sqlalchemy.engine import Result
 
 from sqlalchemy import insert, select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import NoResultFound
 
 
 class AbstractRepository(ABC):
@@ -47,9 +48,12 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def get_obj(self, **filter_by):
         stmt = select(self.model).filter_by(**filter_by)
-        res = await self.session.execute(stmt)
-        res = res.scalar_one()
-        return res
+        try:
+            res = await self.session.execute(stmt)
+            res = res.scalar_one()
+            return res
+        except NoResultFound:
+            return None
 
     async def update_obj(self, obj_id: int, data: dict):
         stmt = (
