@@ -22,6 +22,33 @@ class SettingsAuth(BaseModel):
     timezone: tz = tz("Asia/Almaty")
 
 
+class SettingGoogleAuth(BaseModel):
+    # TODO .env
+    google_client_id: str = (
+       ""
+    )
+    google_client_secret: str = ""
+    google_redirect_url: str = ""
+    google_token_url: str = ""
+    google_user_info_url: str = ""
+    data_post: dict = {
+        "code": None,
+        "client_id": google_client_id,
+        "client_secret": google_client_secret,
+        "redirect_uri": google_redirect_url,
+        "grant_type": "authorization_code",
+    }
+    headers: dict = {"Authorization": None}
+
+    def get_data_to_post(self, code):
+        self.data_post.update({"code": code})
+        return self.data_post
+
+    def get_headers(self, access_token):
+        self.headers.update({"Authorization": f"Bearer {access_token}"})
+        return self.headers
+
+
 class SettingsDataBase(BaseModel):
     url: str = f"sqlite+aiosqlite:///{BASE_DIR}/db.sqlite3"
     echo: bool = True  # Для дебага
@@ -34,6 +61,8 @@ class Settings(BaseSettings):
     db: SettingsDataBase = SettingsDataBase()
     # == Auth
     auth_jwt: SettingsAuth = SettingsAuth()
+    # == Google Auth
+    google_auth: SettingGoogleAuth = SettingGoogleAuth()
 
 
 settings = Settings()
