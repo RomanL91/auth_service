@@ -89,6 +89,8 @@ async def issue_jwt(
 
 
 from auth_user_app.auth_user_service import jwt_service
+
+
 # TODO можно вынести эту логику в UserService по подобию issue_jwt
 @router.post("/refresh/", response_model=schemas.JWT, response_model_exclude_none=True)
 async def refresh_jwt(refresh_token: schemas.RefreshRequestJWT):
@@ -111,3 +113,34 @@ async def refresh_jwt(refresh_token: schemas.RefreshRequestJWT):
         access_token=access_token,
         # refresh_token=refresh_token
     )
+
+
+import requests
+from core.settings import settings
+
+
+@router.get("/login/google/")
+async def login_google():
+    return {
+        "url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={settings.google_auth.google_client_id}&redirect_uri={settings.google_auth.google_redirect_url}&scope=openid%20profile%20email&access_type=offline"
+    }
+
+
+@router.get("/auth/google", response_model=schemas.JWT)
+async def auth_google(uow: UOF_Depends, code: str):
+    # TODO убрать http requests из view в отдельный сервис
+    response = requests.post(
+        settings.google_auth.google_token_url,
+        data=settings.google_auth.get_data_to_post(code),
+    )
+    access_token = response.json().get("access_token")
+    user_info = requests.get(
+        settings.google_auth.google_user_info_url,
+        headers=settings.google_auth.get_headers(access_token),
+    )
+    # TODO 2 функции в одной, декомпозировать
+    jwt = await UserService().get_or_create_user_and_generate_tokens(
+        uow=uow, user_data=user_info.json(), external_id_use=True
+    )
+
+    return jwt
