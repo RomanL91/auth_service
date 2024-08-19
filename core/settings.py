@@ -24,9 +24,7 @@ class SettingsAuth(BaseModel):
 
 class SettingGoogleAuth(BaseModel):
     # TODO .env
-    google_client_id: str = (
-       ""
-    )
+    google_client_id: str = ""
     google_client_secret: str = ""
     google_redirect_url: str = ""
     google_token_url: str = ""
