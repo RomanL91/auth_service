@@ -17,3 +17,4 @@ from phone_num_app.models import PhoneNumber
 from email_app.models import Email
 from sms_app.models import SMSCode
 from social_acc_app.models import SocialAccount
+from jwt_app.models import JWToken

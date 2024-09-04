@@ -55,6 +55,11 @@ class UserT(Base):
         back_populates="user", 
         cascade="all",
     )
+    tokens: Mapped[list["JWTTokens"]] = relationship( # type: ignore
+        "JWTTokens", 
+        back_populates="userts", 
+        cascade="all",
+    )
 
 
     def __str__(self):
