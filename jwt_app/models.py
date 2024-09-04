@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 from enum import Enum as PyEnum
 
-from sqlalchemy import ForeignKey, Enum
+from sqlalchemy import ForeignKey, Enum, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -31,6 +31,10 @@ class JWToken(Base):
     )
     token_type: Mapped[TokenTypeEnum] = mapped_column(
         Enum(TokenTypeEnum),
+        nullable=False,
+    )
+    token: Mapped[str] = mapped_column(
+        String(200),
         nullable=False,
     )
     revoked: Mapped[bool] = mapped_column(
