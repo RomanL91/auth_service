@@ -1,4 +1,6 @@
-import uuid
+from datetime import datetime
+from uuid import uuid4
+
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import (
     DeclarativeBase,
@@ -6,7 +8,6 @@ from sqlalchemy.orm import (
     declared_attr,
     mapped_column,
 )
-from datetime import datetime
 
 from core.function_utils import get_current_time
 
@@ -21,7 +22,7 @@ class Base(DeclarativeBase):
     id: Mapped[str] = mapped_column(
         UUID,
         primary_key=True,
-        default=uuid.uuid4,
+        default=uuid4,
     )
     created_at: Mapped[datetime] = mapped_column(
         default=get_current_time,

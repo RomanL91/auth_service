@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import String, Boolean
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from core import Base
@@ -27,6 +28,10 @@ class UserT(Base):
     )
     external_id: Mapped[str] = mapped_column(
         String(150),
+        nullable=True,
+    )
+    client_uuid: Mapped[str] = mapped_column(
+        UUID,
         nullable=True,
     )
 
