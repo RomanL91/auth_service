@@ -34,9 +34,7 @@ def upgrade() -> None:
         sa.Column("revoked", sa.Boolean(), nullable=False),
         sa.Column("id", sa.UUID(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=True),
-        sa.ForeignKeyConstraint(
-            ["user_id"], ["userts.id"], ondelete="SET NULL"
-        ),
+        sa.ForeignKeyConstraint(["user_id"], ["userts.id"], ondelete="SET NULL"),
         sa.PrimaryKeyConstraint("id"),
     )
     # op.alter_column(

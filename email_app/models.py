@@ -9,20 +9,20 @@ from core import Base
 
 class Email(Base):
     email: Mapped[str] = mapped_column(
-        String, 
-        nullable=True, 
+        String,
+        nullable=True,
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), 
-        ForeignKey('userts.id'),
+        UUID(as_uuid=True),
+        ForeignKey("userts.id"),
     )
-    user: Mapped["Userts"] = relationship( # type: ignore
-        "Userts", 
+    user: Mapped["Userts"] = relationship(  # type: ignore
+        "Userts",
         back_populates="emails",
     )
 
     def __str__(self) -> str:
         return f"id={self.id} email={self.email!r}"
-    
+
     def __repr__(self) -> str:
         return str(self)

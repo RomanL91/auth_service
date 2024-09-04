@@ -37,30 +37,26 @@ class UserT(Base):
     # внешний ключ связи 1-к-1 на номера телефонов
     phone_number_id: Mapped[str] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey('phonenumbers.id'),
+        ForeignKey("phonenumbers.id"),
     )
-    phone_number: Mapped["PhoneNumbers"] = relationship( # type: ignore
-        "PhoneNumbers", 
-        uselist=False, 
-        back_populates="userts",
-        cascade="all"
+    phone_number: Mapped["PhoneNumbers"] = relationship(  # type: ignore
+        "PhoneNumbers", uselist=False, back_populates="userts", cascade="all"
     )
     emails: Mapped[list["Emails"]] = relationship(  # type: ignore
-        "Emails", 
+        "Emails",
         back_populates="userts",
         cascade="all",
     )
-    social_accounts: Mapped[list["SocialAccounts"]] = relationship( # type: ignore
-        "SocialAccounts", 
-        back_populates="user", 
+    social_accounts: Mapped[list["SocialAccounts"]] = relationship(  # type: ignore
+        "SocialAccounts",
+        back_populates="user",
         cascade="all",
     )
-    tokens: Mapped[list["JWTTokens"]] = relationship( # type: ignore
-        "JWTTokens", 
-        back_populates="userts", 
+    tokens: Mapped[list["JWTTokens"]] = relationship(  # type: ignore
+        "JWTTokens",
+        back_populates="userts",
         cascade="all",
     )
-
 
     def __str__(self):
         return f"id={self.id}, name={self.firt_name!r})"

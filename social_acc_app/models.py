@@ -17,10 +17,13 @@ class SocialAccount(Base):
         nullable=False,
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("userts.id", ondelete="SET NULL",),
+        ForeignKey(
+            "userts.id",
+            ondelete="SET NULL",
+        ),
         nullable=True,
     )
-    user: Mapped["Userts"] = relationship( # type: ignore
+    user: Mapped["Userts"] = relationship(  # type: ignore
         "Userts",
         back_populates="socialaccounts",
     )
