@@ -1,6 +1,7 @@
 from pytz import timezone as tz
 
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings
@@ -24,11 +25,13 @@ class SettingsAuth(BaseModel):
 
 class SettingGoogleAuth(BaseModel):
     # TODO .env
-    google_client_id: str = ""
-    google_client_secret: str = ""
-    google_redirect_url: str = ""
-    google_token_url: str = ""
-    google_user_info_url: str = ""
+    google_client_id: str = (
+        "512775846808-npmspbusn7tep886ej4je4n88jrvmqrl.apps.googleusercontent.com"
+    )
+    google_client_secret: str = "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"
+    google_redirect_url: str = "http://localhost:8001/auth_api/v1/auth_user/auth/google"
+    google_token_url: str = "https://accounts.google.com/o/oauth2/token"
+    google_user_info_url: str = "https://www.googleapis.com/oauth2/v1/userinfo"
     data_post: dict = {
         "code": None,
         "client_id": google_client_id,
@@ -53,8 +56,10 @@ class SettingsDataBase(BaseModel):
 
 
 class Settings(BaseSettings):
-    api_v1_prefix: str = "/auth_api/v1"
 
+    # == Other
+    api_v1_prefix: str = "/auth_api/v1"
+    time_zone: ZoneInfo = ZoneInfo("Asia/Almaty")
     # == DataBase
     db: SettingsDataBase = SettingsDataBase()
     # == Auth
