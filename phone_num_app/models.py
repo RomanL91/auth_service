@@ -13,6 +13,11 @@ class PhoneNumber(Base):
         "Userts", 
         back_populates="phonenumbers",
     )
+    sms_codes: Mapped[list["SMSCodes"]] = relationship( # type: ignore
+        "SMSCodes", 
+        back_populates="phonenumbers",
+    )
+
 
     def __str__(self) -> str:
         return f"id={self.id} phone num={self.phone_number!r}"
