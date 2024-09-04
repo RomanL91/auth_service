@@ -42,11 +42,18 @@ class UserT(Base):
     phone_number: Mapped["PhoneNumbers"] = relationship( # type: ignore
         "PhoneNumbers", 
         uselist=False, 
-        back_populates="userts"
+        back_populates="userts",
+        cascade="all"
     )
     emails: Mapped[list["Emails"]] = relationship(  # type: ignore
         "Emails", 
         back_populates="userts",
+        cascade="all",
+    )
+    social_accounts: Mapped[list["SocialAccounts"]] = relationship( # type: ignore
+        "SocialAccounts", 
+        back_populates="user", 
+        cascade="all",
     )
 
 
