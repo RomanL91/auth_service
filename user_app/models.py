@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from sqlalchemy import String, Boolean
+from sqlalchemy import String, Boolean, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core import Base
 from core.function_utils import get_current_time
@@ -33,6 +33,16 @@ class UserT(Base):
     client_uuid: Mapped[str] = mapped_column(
         UUID,
         nullable=True,
+    )
+    # внешний ключ связи 1-к-1 на номера телефонов
+    phone_number_id: Mapped[str] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey('phonenumbers.id'),
+    )
+    phone_number: Mapped["PhoneNumbers"] = relationship( # type: ignore
+        "PhoneNumbers", 
+        uselist=False, 
+        back_populates="userts"
     )
 
     def __str__(self):
