@@ -44,6 +44,11 @@ class UserT(Base):
         uselist=False, 
         back_populates="userts"
     )
+    emails: Mapped[list["Emails"]] = relationship(  # type: ignore
+        "Emails", 
+        back_populates="userts",
+    )
+
 
     def __str__(self):
         return f"id={self.id}, name={self.firt_name!r})"
