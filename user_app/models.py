@@ -38,6 +38,7 @@ class UserT(Base):
     phone_number_id: Mapped[str] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("phonenumbers.id"),
+        nullable=True,
     )
     phone_number: Mapped["PhoneNumber"] = relationship(  # type: ignore
         "PhoneNumber", 
