@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from core.DB_manager import db_manager
 
-from auth_user_app.auth_user_repository import UserRepository
+from user_app.user_repository import UserRepository
 
 
 class IUnitOfWork(ABC):
