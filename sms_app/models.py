@@ -19,7 +19,7 @@ class SMSCode(Base):
         UUID(as_uuid=True),
         ForeignKey("phonenumbers.id"),
     )
-    phone_number: Mapped["PhoneNumbers"] = relationship(  # type: ignore
-        "PhoneNumbers",
+    phone_number: Mapped["PhoneNumber"] = relationship(  # type: ignore
+        "PhoneNumber",
         back_populates="sms_codes",
     )

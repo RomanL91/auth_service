@@ -16,8 +16,8 @@ class Email(Base):
         UUID(as_uuid=True),
         ForeignKey("userts.id"),
     )
-    user: Mapped["Userts"] = relationship(  # type: ignore
-        "Userts",
+    user: Mapped["UserT"] = relationship(  # type: ignore
+        "UserT",
         back_populates="emails",
     )
 

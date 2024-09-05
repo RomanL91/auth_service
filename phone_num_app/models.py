@@ -5,14 +5,17 @@ from core import Base
 
 
 class PhoneNumber(Base):
-    phone_number: Mapped[str] = mapped_column(String(11), nullable=True)
-    user: Mapped["Userts"] = relationship(  # type: ignore
-        "Userts",
-        back_populates="phonenumbers",
+    phone_number: Mapped[str] = mapped_column(
+        String(11), 
+        nullable=True,
     )
-    sms_codes: Mapped[list["SMSCodes"]] = relationship(  # type: ignore
-        "SMSCodes",
-        back_populates="phonenumbers",
+    user: Mapped["UserT"] = relationship(  # type: ignore
+        "UserT",
+        back_populates="phone_number",
+    )
+    sms_codes: Mapped[list["SMSCode"]] = relationship(  # type: ignore
+        "SMSCode",
+        back_populates="phone_number",
     )
 
     def __str__(self) -> str:

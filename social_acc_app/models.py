@@ -23,9 +23,9 @@ class SocialAccount(Base):
         ),
         nullable=True,
     )
-    user: Mapped["Userts"] = relationship(  # type: ignore
-        "Userts",
-        back_populates="socialaccounts",
+    user: Mapped["UserT"] = relationship(  # type: ignore
+        "UserT",
+        back_populates="social_accounts",
     )
 
     def __str__(self):

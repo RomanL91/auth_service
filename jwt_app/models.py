@@ -41,7 +41,7 @@ class JWToken(Base):
         default=False,
         nullable=False,
     )
-    user: Mapped["Userts"] = relationship(  # type: ignore
-        "Userts",
-        back_populates="jwtokens",
+    user: Mapped["UserT"] = relationship(  # type: ignore
+        "UserT",
+        back_populates="tokens",
     )

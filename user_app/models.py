@@ -39,22 +39,25 @@ class UserT(Base):
         UUID(as_uuid=True),
         ForeignKey("phonenumbers.id"),
     )
-    phone_number: Mapped["PhoneNumbers"] = relationship(  # type: ignore
-        "PhoneNumbers", uselist=False, back_populates="userts", cascade="all"
-    )
-    emails: Mapped[list["Emails"]] = relationship(  # type: ignore
-        "Emails",
-        back_populates="userts",
+    phone_number: Mapped["PhoneNumber"] = relationship(  # type: ignore
+        "PhoneNumber", 
+        uselist=False, 
+        back_populates="user", 
         cascade="all",
     )
-    social_accounts: Mapped[list["SocialAccounts"]] = relationship(  # type: ignore
-        "SocialAccounts",
+    emails: Mapped[list["Email"]] = relationship(  # type: ignore
+        "Email",
         back_populates="user",
         cascade="all",
     )
-    tokens: Mapped[list["JWTTokens"]] = relationship(  # type: ignore
-        "JWTTokens",
-        back_populates="userts",
+    social_accounts: Mapped[list["SocialAccount"]] = relationship(  # type: ignore
+        "SocialAccount",
+        back_populates="user",
+        cascade="all",
+    )
+    tokens: Mapped[list["JWToken"]] = relationship(  # type: ignore
+        "JWToken",
+        back_populates="user",
         cascade="all",
     )
 

@@ -138,6 +138,7 @@ async def auth_google(uow: UOF_Depends, code: str):
         settings.google_auth.google_user_info_url,
         headers=settings.google_auth.get_headers(access_token),
     )
+    print(f"--- user_info --- >>> {user_info.json()}")
     # TODO 2 функции в одной, декомпозировать
     jwt = await UserService().get_or_create_user_and_generate_tokens(
         uow=uow, user_data=user_info.json(), external_id_use=True
