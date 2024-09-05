@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
-from .auth_user_api.views import router as auth_user_router
+from .oauth2_google.views import router as oath2_google_router
 
 
 router = APIRouter()
 
-router.include_router(router=auth_user_router, prefix="/auth_user")
+router.include_router(router=oath2_google_router, prefix="/auth_user")
