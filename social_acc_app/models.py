@@ -28,6 +28,20 @@ class SocialAccount(Base):
         back_populates="social_accounts",
     )
 
+    email_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey(                  # ForeignKey на таблицу Email
+            "emails.id", 
+            ondelete="SET NULL",
+        ), 
+        nullable=True,
+    )
+    email: Mapped["Email"] = relationship(  # type: ignore
+        "Email", 
+        back_populates="social_account", 
+        uselist=False,
+    )
+
+
     def __str__(self):
         return f"id={self.id}, provider={self.provider!r}, user={self.user!r}"
 

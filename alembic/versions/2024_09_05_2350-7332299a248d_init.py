@@ -1,8 +1,8 @@
 """init
 
-Revision ID: 358679881305
+Revision ID: 7332299a248d
 Revises: 
-Create Date: 2024-09-05 23:05:07.813860
+Create Date: 2024-09-05 23:50:50.938155
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "358679881305"
+revision: str = "7332299a248d"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -97,7 +97,9 @@ def upgrade() -> None:
         sa.Column("revoked", sa.Boolean(), nullable=False),
         sa.Column("id", sa.UUID(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=True),
-        sa.ForeignKeyConstraint(["user_id"], ["userts.id"], ondelete="SET NULL"),
+        sa.ForeignKeyConstraint(
+            ["user_id"], ["userts.id"], ondelete="SET NULL"
+        ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -105,9 +107,15 @@ def upgrade() -> None:
         sa.Column("provider", sa.String(length=50), nullable=False),
         sa.Column("provider_user_id", sa.String(length=100), nullable=False),
         sa.Column("user_id", sa.UUID(), nullable=True),
+        sa.Column("email_id", sa.UUID(), nullable=True),
         sa.Column("id", sa.UUID(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=True),
-        sa.ForeignKeyConstraint(["user_id"], ["userts.id"], ondelete="SET NULL"),
+        sa.ForeignKeyConstraint(
+            ["email_id"], ["emails.id"], ondelete="SET NULL"
+        ),
+        sa.ForeignKeyConstraint(
+            ["user_id"], ["userts.id"], ondelete="SET NULL"
+        ),
         sa.PrimaryKeyConstraint("id"),
     )
     # ### end Alembic commands ###

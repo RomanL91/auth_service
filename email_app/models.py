@@ -20,6 +20,11 @@ class Email(Base):
         "UserT",
         back_populates="emails",
     )
+    social_account: Mapped["SocialAccount"] = relationship(  # type: ignore
+        "SocialAccount",
+        back_populates="email",
+        uselist=False,
+    )
 
     def __str__(self) -> str:
         return f"id={self.id} email={self.email!r}"
