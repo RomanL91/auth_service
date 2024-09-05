@@ -6,7 +6,7 @@ from core import Base
 
 class PhoneNumber(Base):
     phone_number: Mapped[str] = mapped_column(
-        String(11), 
+        String(11),
         nullable=True,
     )
     user: Mapped["UserT"] = relationship(  # type: ignore

@@ -10,19 +10,9 @@ class User(BaseModel):
     model_config = ConfigDict(
         strict=True,
     )
-    firt_name: Annotated[
-        str | None,
-        Field(
-            ...,
-            description="Имя пользователя."
-        )
-    ] = None
+    firt_name: Annotated[str | None, Field(..., description="Имя пользователя.")] = None
     last_name: Annotated[
-        str | None,
-        Field(
-            ...,
-            description="Фамилия пользователя."
-        )
+        str | None, Field(..., description="Фамилия пользователя.")
     ] = None
     # updated_at: Annotated[
     #     datetime | None,
@@ -73,7 +63,4 @@ class User(BaseModel):
 
     @classmethod
     def from_google_info(cls, google_user: GoogleUserInfo) -> "User":
-        return cls(
-            firt_name=google_user.given_name,
-            last_name=google_user.family_name
-        )
+        return cls(firt_name=google_user.given_name, last_name=google_user.family_name)

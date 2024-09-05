@@ -33,7 +33,7 @@ async def login_google():
 
 
 @router.get(
-    "/auth/google", 
+    "/auth/google",
     status_code=status.HTTP_200_OK,
     response_model=User,
     summary="Создаем Пользователя через учетку Google.",
@@ -46,5 +46,7 @@ async def login_google():
 )
 async def auth_google(uow: UOF_Depends, code: CodeFromGoogle_Depends):
     data_user_google = await UserService().get_user_info_from_google(code)
-    user = await UserService().create_user(uow=uow, new_user=data_user_google) # TODO get_or_create?!
+    user = await UserService().create_user(
+        uow=uow, new_user=data_user_google
+    )  # TODO get_or_create?!
     return user

@@ -41,9 +41,9 @@ class UserT(Base):
         nullable=True,
     )
     phone_number: Mapped["PhoneNumber"] = relationship(  # type: ignore
-        "PhoneNumber", 
-        uselist=False, 
-        back_populates="user", 
+        "PhoneNumber",
+        uselist=False,
+        back_populates="user",
         cascade="all",
     )
     emails: Mapped[list["Email"]] = relationship(  # type: ignore

@@ -1,19 +1,20 @@
 import httpx
+
 # == Core
 from core import settings
 from core.BASE_unit_of_work import IUnitOfWork
+
 # == Exceptions
 from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError, NoResultFound
+
 # == Schemas
 from user_app.schemas import User
 from social_acc_app.schemas import CodeFromGoogle, GoogleUserInfo
 
 
 class UserService:
-    async def create_user(
-        self, uow: IUnitOfWork, new_user: User
-    ) -> User | None:
+    async def create_user(self, uow: IUnitOfWork, new_user: User) -> User | None:
         user_dict = User.from_google_info(new_user).model_dump()
         async with uow:
             try:
@@ -23,10 +24,12 @@ class UserService:
             except IntegrityError as e:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=e,   # TODO пока что показываем ошибки
+                    detail=e,  # TODO пока что показываем ошибки
                 )
 
-    async def get_user_info_from_google(self, code: CodeFromGoogle) -> GoogleUserInfo | None:
+    async def get_user_info_from_google(
+        self, code: CodeFromGoogle
+    ) -> GoogleUserInfo | None:
         async with httpx.AsyncClient() as client:
             token_response = await client.post(
                 settings.google_auth.google_token_url,

@@ -6,8 +6,10 @@ from pydantic import BaseModel, EmailStr, ConfigDict, HttpUrl
 class OAuth2GoogleUrl(BaseModel):
     url: HttpUrl
 
+
 class CodeFromGoogle(BaseModel):
     code: str
+
 
 class GoogleUserInfo(BaseModel):
     id: str
