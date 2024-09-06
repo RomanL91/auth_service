@@ -5,6 +5,8 @@ from datetime import datetime
 
 from social_acc_app.schemas import GoogleUserInfo
 
+class SaveUserSchema(BaseModel):
+    id: UUID4
 
 class User(BaseModel):
     model_config = ConfigDict(
@@ -63,4 +65,4 @@ class User(BaseModel):
 
     @classmethod
     def from_google_info(cls, google_user: GoogleUserInfo) -> "User":
-        return cls(firt_name=google_user.given_name, last_name=google_user.family_name)
+        return cls(firt_name=google_user.given_name, last_name=google_user.family_name,)
