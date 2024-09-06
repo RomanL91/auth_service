@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 from core.DB_manager import db_manager
 
 from user_app.user_repository import UserRepository
+from email_app.email_repository import EmailRepository
+from social_acc_app.social_repository import SocialAccountRepository
 
 
 class IUnitOfWork(ABC):
@@ -31,6 +33,8 @@ class UnitOfWork:
         self.session = self.session_factory()
         # для работы
         self.user = UserRepository(self.session)
+        self.email = EmailRepository(self.session)
+        self.social = SocialAccountRepository(self.session)
 
     async def __aexit__(self, *args):
         await self.session.close()
