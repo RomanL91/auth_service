@@ -1,11 +1,14 @@
 from fastapi import APIRouter, status, Response, Depends, HTTPException, Form
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
+# === Services
 from user_app.user_services import UserService
+from email_app.email_services import EmailService
+from social_acc_app.social_services import SocialService
 
 # === Schemas
-from user_app.schemas import User
-from social_acc_app.schemas import OAuth2GoogleUrl, GoogleUserInfo
+from user_app.schemas import SaveUserSchema
+from social_acc_app.schemas import OAuth2GoogleUrl
 
 from core.settings import settings
 from api_v1.api_dependencies import UOF_Depends, CodeFromGoogle_Depends
@@ -35,7 +38,7 @@ async def login_google():
 @router.get(
     "/auth/google",
     status_code=status.HTTP_200_OK,
-    response_model=User,
+    response_model=SaveUserSchema,
     summary="Создаем Пользователя через учетку Google.",
     description="""
         Данный endpoint сохранен в настройках google console и
@@ -49,4 +52,15 @@ async def auth_google(uow: UOF_Depends, code: CodeFromGoogle_Depends):
     user = await UserService().create_user(
         uow=uow, new_user=data_user_google
     )  # TODO get_or_create?!
+    email = await EmailService().create_email(
+        uow=uow,
+        google_user=data_user_google,
+        user=user,
+    )
+    social = await SocialService().create_social_acc(
+        uow=uow,
+        google_user=data_user_google,
+        user=user,
+        email=email,
+    )
     return user
