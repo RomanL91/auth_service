@@ -15,7 +15,9 @@ class EmailSchema(BaseModel):
     user_id: UUID4
 
     @classmethod
-    def convert_data(cls, google_user: GoogleUserInfo, user: SaveUserSchema) -> "EmailSchema":
+    def convert_data(
+        cls, google_user: GoogleUserInfo, user: SaveUserSchema
+    ) -> "EmailSchema":
         return cls(
             email=google_user.email,
             user_id=user.id,

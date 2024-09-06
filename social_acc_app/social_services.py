@@ -12,8 +12,16 @@ from email_app.schemas import SaveEmailSchema
 
 
 class SocialService:
-    async def create_social_acc(self, uow: IUnitOfWork, google_user: GoogleUserInfo, user: SaveUserSchema, email: SaveUserSchema) -> SocialAccountSchema | None:
-        social_acc_dict = SocialAccountSchema.convert_data(google_user, user, email).model_dump()
+    async def create_social_acc(
+        self,
+        uow: IUnitOfWork,
+        google_user: GoogleUserInfo,
+        user: SaveUserSchema,
+        email: SaveUserSchema,
+    ) -> SocialAccountSchema | None:
+        social_acc_dict = SocialAccountSchema.convert_data(
+            google_user, user, email
+        ).model_dump()
         async with uow:
             try:
                 social = await uow.social.create_obj(social_acc_dict)
@@ -23,4 +31,4 @@ class SocialService:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=e,  # TODO пока что показываем ошибки
-                )       
+                )

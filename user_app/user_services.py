@@ -14,7 +14,9 @@ from social_acc_app.schemas import CodeFromGoogle, GoogleUserInfo
 
 
 class UserService:
-    async def create_user(self, uow: IUnitOfWork, new_user: User) -> SaveUserSchema | None:
+    async def create_user(
+        self, uow: IUnitOfWork, new_user: User
+    ) -> SaveUserSchema | None:
         user_dict = User.from_google_info(new_user).model_dump()
         async with uow:
             try:

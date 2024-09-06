@@ -12,7 +12,9 @@ from user_app.schemas import SaveUserSchema
 
 
 class EmailService:
-    async def create_email(self, uow: IUnitOfWork, google_user: GoogleUserInfo, user: SaveUserSchema) -> EmailSchema | None:
+    async def create_email(
+        self, uow: IUnitOfWork, google_user: GoogleUserInfo, user: SaveUserSchema
+    ) -> EmailSchema | None:
         email_dict = EmailSchema.convert_data(google_user, user).model_dump()
         async with uow:
             try:
