@@ -5,6 +5,7 @@ from core.DB_manager import db_manager
 from user_app.user_repository import UserRepository
 from email_app.email_repository import EmailRepository
 from social_acc_app.social_repository import SocialAccountRepository
+from jwt_app.jwt_repository import JWTRepository
 
 
 class IUnitOfWork(ABC):
@@ -35,6 +36,7 @@ class UnitOfWork:
         self.user = UserRepository(self.session)
         self.email = EmailRepository(self.session)
         self.social = SocialAccountRepository(self.session)
+        self.jwt = JWTRepository(self.session)
 
     async def __aexit__(self, *args):
         await self.session.close()
