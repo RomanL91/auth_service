@@ -1,6 +1,6 @@
+from uuid import uuid4
 from typing import Annotated
-from annotated_types import MinLen, MaxLen
-from pydantic import BaseModel, EmailStr, ConfigDict, HttpUrl, Field, UUID4
+from pydantic import BaseModel, ConfigDict, Field, UUID4
 
 from social_acc_app.schemas import GoogleUserInfo
 
@@ -13,6 +13,13 @@ class User(BaseModel):
     model_config = ConfigDict(
         strict=True,
     )
+    id: Annotated[
+        UUID4,
+        Field(
+            ...,
+            description="Уникальный ID пользователя.",
+        )
+    ] = uuid4()
     firt_name: Annotated[str | None, Field(..., description="Имя пользователя.")] = None
     last_name: Annotated[
         str | None, Field(..., description="Фамилия пользователя.")
