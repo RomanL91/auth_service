@@ -11,6 +11,11 @@ from sqlalchemy.exc import IntegrityError, NoResultFound
 # == Schemas
 from user_app.schemas import User, SaveUserSchema
 from social_acc_app.schemas import CodeFromGoogle, GoogleUserInfo
+from jwt_app.schemas import JWTokensResponse
+
+from email_app.email_services import EmailService
+from social_acc_app.social_services import SocialService
+from jwt_app.jwt_services import JWTService
 
 
 class UserService:
@@ -51,3 +56,37 @@ class UserService:
                 return user_info
             else:
                 return None
+
+    async def get_user_by_email(self, uow: IUnitOfWork, email: str) -> User:
+        async with uow:
+            return await uow.user.get_user_by_email(email)
+
+    async def auth_google(self, uow: IUnitOfWork, data: CodeFromGoogle) -> JWTokensResponse:
+        # может это паттерн цепочка обязанностей?
+        data_user_google = await UserService().get_user_info_from_google(data)
+        user = await self.get_user_by_email(uow=uow, email=data_user_google.email)
+        if user is not None:
+            jwt = await JWTService().create_jwt(
+                uow=uow,
+                user=user,
+            )
+            return jwt
+        user = await UserService().create_user(
+            uow=uow, new_user=data_user_google
+        )
+        email = await EmailService().create_email(
+            uow=uow,
+            google_user=data_user_google,
+            user=user,
+        )
+        social = await SocialService().create_social_acc(
+            uow=uow,
+            google_user=data_user_google,
+            user=user,
+            email=email,
+        )
+        jwt = await JWTService().create_jwt(
+            uow=uow,
+            user=user,
+        )
+        return jwt
