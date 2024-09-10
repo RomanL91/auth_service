@@ -1,14 +1,16 @@
-from fastapi import APIRouter, status, Response, Depends, HTTPException, Form
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import APIRouter, status # Response, Depends, HTTPException, Form
+from fastapi.security import OAuth2PasswordBearer # OAuth2PasswordRequestForm
 
 # === Services
 from user_app.user_services import UserService
 from email_app.email_services import EmailService
 from social_acc_app.social_services import SocialService
+from jwt_app.jwt_services import JWTService
 
 # === Schemas
-from user_app.schemas import SaveUserSchema
+# from user_app.schemas import SaveUserSchema
 from social_acc_app.schemas import OAuth2GoogleUrl
+from jwt_app.schemas import JWTokensResponse
 
 from core.settings import settings
 from api_v1.api_dependencies import UOF_Depends, CodeFromGoogle_Depends
@@ -31,6 +33,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token/")
 )
 async def login_google():
     return {
+        # TODO вынести в настройки
         "url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={settings.google_auth.google_client_id}&redirect_uri={settings.google_auth.google_redirect_url}&scope=openid%20profile%20email&access_type=offline"
     }
 
@@ -38,13 +41,13 @@ async def login_google():
 @router.get(
     "/auth/google",
     status_code=status.HTTP_200_OK,
-    response_model=SaveUserSchema,
+    response_model=JWTokensResponse,
     summary="Создаем Пользователя через учетку Google.",
     description="""
         Данный endpoint сохранен в настройках google console и
         на него настроен редирект после того как пользователь 
         аутентифицируется на стороне Google. После чего будут полученны 
-        данные профиля пользователя и сохранены в систему.
+        данные профиля пользователя, сохранены в систему, созданы JWT.
     """,
 )
 async def auth_google(uow: UOF_Depends, code: CodeFromGoogle_Depends):
@@ -64,4 +67,8 @@ async def auth_google(uow: UOF_Depends, code: CodeFromGoogle_Depends):
         user=user,
         email=email,
     )
-    return user
+    jwt = await JWTService().create_jwt(
+        uow=uow,
+        user=user,
+    )
+    return jwt
