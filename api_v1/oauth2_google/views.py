@@ -51,24 +51,4 @@ async def login_google():
     """,
 )
 async def auth_google(uow: UOF_Depends, code: CodeFromGoogle_Depends):
-    data_user_google = await UserService().get_user_info_from_google(code)
-    # может это паттерн цепочка обязанностей?
-    user = await UserService().create_user(
-        uow=uow, new_user=data_user_google
-    )  # TODO get_or_create?!
-    email = await EmailService().create_email(
-        uow=uow,
-        google_user=data_user_google,
-        user=user,
-    )
-    social = await SocialService().create_social_acc(
-        uow=uow,
-        google_user=data_user_google,
-        user=user,
-        email=email,
-    )
-    jwt = await JWTService().create_jwt(
-        uow=uow,
-        user=user,
-    )
-    return jwt
+    return await UserService().auth_google(uow=uow, data=code)
