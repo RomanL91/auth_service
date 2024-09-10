@@ -34,7 +34,6 @@ class JWTService:
         )
         tokens = JWTokensCreate(access=access_token, refresh=refresh_token)
         return tokens
-    
 
     async def create_jwt(
         self,
@@ -52,7 +51,7 @@ class JWTService:
             except IntegrityError as e:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=e, # TODO показываем ошибки клиентской стороне для отладки, потом скрываем
+                    detail=e,  # TODO показываем ошибки клиентской стороне для отладки, потом скрываем
                 )
 
 
