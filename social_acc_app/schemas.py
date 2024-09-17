@@ -1,7 +1,29 @@
-from typing import Annotated
-from annotated_types import MinLen, MaxLen
-from pydantic import BaseModel, EmailStr, ConfigDict, HttpUrl, UUID4
+from uuid import uuid4
 
+from pydantic import BaseModel, EmailStr, HttpUrl, UUID4
+
+
+class LinkToAuthenticationForm(BaseModel):
+    url: HttpUrl
+
+class ParametersOAuthForm(BaseModel):
+    code: str
+
+class GoogleForm(ParametersOAuthForm):
+    pass
+
+class VKForm(ParametersOAuthForm):
+    device_id: str
+    state: str
+
+class DataUserForMyService(BaseModel):
+    id: UUID4
+    first_name: str
+    last_name: str
+    email: EmailStr
+    provider: str
+    provider_user_id: str
+    ava: HttpUrl
 
 class OAuth2GoogleUrl(BaseModel):
     url: HttpUrl
@@ -21,23 +43,23 @@ class GoogleUserInfo(BaseModel):
     picture: HttpUrl
 
 
-# from user_app.schemas import SaveUserSchema
-# from email_app.schemas import SaveEmailSchema # a circular import
+class ParamsFormVK(BaseModel):
+    code: str
+    device_id: str
+    state: str
+
+
+class VKUserInfo(BaseModel):
+    user_id: str
+    first_name: str
+    last_name: str
+    email: EmailStr | str
+    avatar: HttpUrl
 
 
 class SocialAccountSchema(BaseModel):
+    id: UUID4 = uuid4()
     provider: str
     provider_user_id: str
     user_id: UUID4
     email_id: UUID4
-
-    @classmethod
-    def convert_data(
-        cls, google_user: GoogleUserInfo, user, email
-    ) -> "SocialAccountSchema":
-        return cls(
-            provider="google",
-            provider_user_id=google_user.id,
-            user_id=user.id,
-            email_id=email.id,
-        )
