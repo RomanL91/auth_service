@@ -3,25 +3,30 @@ from core.BASE_unit_of_work import IUnitOfWork
 
 # == Exceptions
 from fastapi import HTTPException, status
-from sqlalchemy.exc import IntegrityError, NoResultFound
+from sqlalchemy.exc import IntegrityError
 
 # == Schemas
-from social_acc_app.schemas import SocialAccountSchema, GoogleUserInfo
-from user_app.schemas import SaveUserSchema
-from email_app.schemas import SaveEmailSchema
+from social_acc_app.schemas import SocialAccountSchema, DataUserForMyService
 
 
 class SocialService:
+    exclude = (
+        "ava",
+        "last_name",
+        "first_name",
+        "email",
+        "active",
+    )
     async def create_social_acc(
         self,
         uow: IUnitOfWork,
-        google_user: GoogleUserInfo,
-        user: SaveUserSchema,
-        email: SaveUserSchema,
+        data_user: DataUserForMyService, 
+        **kwargs,
     ) -> SocialAccountSchema | None:
-        social_acc_dict = SocialAccountSchema.convert_data(
-            google_user, user, email
-        ).model_dump()
+        social_acc_dict = {
+            **data_user.model_dump(exclude=self.exclude),
+            **kwargs,
+        }
         async with uow:
             try:
                 social = await uow.social.create_obj(social_acc_dict)
