@@ -29,6 +29,9 @@ class UserService:
     # а управление транзакциями осуществлять на уровне класса сервиса.
     # Это уменьшит количество передаваемых параметров
 
+    # паттернт стратегия при наличии пользователя или его отсутствии
+    # и для разных социальных сетей
+
     exclude = ("email", "ava", "provider_user_id", "provider")
 
     async def get_user_by_socia_id(self, uow: IUnitOfWork, social_id: str) -> User:
