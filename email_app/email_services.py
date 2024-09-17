@@ -20,13 +20,14 @@ class EmailService:
         "ava",
         "active",
     )
+
     async def create_email(
-        self, uow: IUnitOfWork, data_user: DataUserForMyService, **kwargs,
+        self,
+        uow: IUnitOfWork,
+        data_user: DataUserForMyService,
+        **kwargs,
     ) -> EmailSchema | None:
-        email_dict = {
-            **data_user.model_dump(exclude=self.exclude),
-            **kwargs
-        }
+        email_dict = {**data_user.model_dump(exclude=self.exclude), **kwargs}
         async with uow:
             try:
                 email = await uow.email.create_obj(email_dict)

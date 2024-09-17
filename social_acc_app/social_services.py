@@ -17,10 +17,11 @@ class SocialService:
         "email",
         "active",
     )
+
     async def create_social_acc(
         self,
         uow: IUnitOfWork,
-        data_user: DataUserForMyService, 
+        data_user: DataUserForMyService,
         **kwargs,
     ) -> SocialAccountSchema | None:
         social_acc_dict = {

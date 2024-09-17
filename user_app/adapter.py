@@ -22,6 +22,7 @@ class GoogleAdapter:
             ava=google_data.picture,
         )
 
+
 # Адаптер для VK
 class VKAdapter:
     @staticmethod
@@ -35,7 +36,7 @@ class VKAdapter:
             provider_user_id=vk_data.user_id,
             ava=vk_data.avatar,
         )
-    
+
 
 # Фабрика адаптеров
 class UserFactoryAdapter:
@@ -47,13 +48,10 @@ class UserFactoryAdapter:
             return VKAdapter.to_user(data)
         else:
             raise ValueError(f"Unsupported source: {source}")
-        
+
     @staticmethod
     async def fetch_user_info(
-        url: str,
-        headers: dict = None,
-        data: dict = None,
-        request_method: str = "GET"
+        url: str, headers: dict = None, data: dict = None, request_method: str = "GET"
     ):
         client = AsyncClient()
         # Выбираем метод запроса (GET или POST)

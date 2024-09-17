@@ -24,27 +24,27 @@ from user_app.adapter import UserFactoryAdapter
 class UserService:
     # TODO Внедрение Unit of Work на уровне сервиса
     # def __init__(self, uow: IUnitOfWork):
-        # self.uow = uow
-    # Вместо того чтобы передавать uow в каждый метод, можно внедрить uow в сам сервис, 
-    # а управление транзакциями осуществлять на уровне класса сервиса. 
+    # self.uow = uow
+    # Вместо того чтобы передавать uow в каждый метод, можно внедрить uow в сам сервис,
+    # а управление транзакциями осуществлять на уровне класса сервиса.
     # Это уменьшит количество передаваемых параметров
-    
+
     exclude = ("email", "ava", "provider_user_id", "provider")
 
     async def get_user_by_socia_id(self, uow: IUnitOfWork, social_id: str) -> User:
         async with uow:
             return await uow.user.get_user_by_social_id(social_id)
-        
-    async def get_user_by_social_or_email(self, uow: IUnitOfWork, email: str = None, provider_user_id: str = None):
+
+    async def get_user_by_social_or_email(
+        self, uow: IUnitOfWork, email: str = None, provider_user_id: str = None
+    ):
         async with uow:
             return await uow.user.get_user_by_social_or_email(email, provider_user_id)
 
     async def create_user(
         self, uow: IUnitOfWork, new_user: DataUserForMyService
     ) -> User | None:
-        user_dict = new_user.model_dump(
-            exclude=self.exclude
-        )
+        user_dict = new_user.model_dump(exclude=self.exclude)
         async with uow:
             try:
                 user = await uow.user.create_obj(user_dict)
@@ -56,7 +56,9 @@ class UserService:
                     detail=e,  # TODO пока что показываем ошибки
                 )
 
-    async def auth_google(self, uow: IUnitOfWork, data_google_form: GoogleForm) -> JWTokensResponse:
+    async def auth_google(
+        self, uow: IUnitOfWork, data_google_form: GoogleForm
+    ) -> JWTokensResponse:
         data_form_google = data_google_form.model_dump()
         settings.google_auth.data_post = data_form_google
         access_token_google = await self.get_access_key_from_oauth_service(
@@ -66,7 +68,7 @@ class UserService:
         # получение инфы о пользователе
         data_user_from_google = await UserFactoryAdapter.fetch_user_info(
             url=settings.google_auth.google_user_info_url,
-            headers=settings.google_auth.get_headers(access_token_google)
+            headers=settings.google_auth.get_headers(access_token_google),
         )
         # адаптирую для БД сервиса
         customized_user_data = UserFactoryAdapter.create_user(
@@ -76,7 +78,7 @@ class UserService:
         user = await self.get_user_by_social_or_email(
             uow=uow,
             email=data_user_from_google.email,
-            provider_user_id=data_user_from_google.id
+            provider_user_id=data_user_from_google.id,
         )
         if user is not None:
             jwt = await JWTService().create_jwt(
@@ -84,9 +86,7 @@ class UserService:
                 user=user,
             )
             return jwt
-        user = await self.create_user(
-            uow=uow, new_user=customized_user_data
-        )
+        user = await self.create_user(uow=uow, new_user=customized_user_data)
         email = await EmailService().create_email(
             uow=uow,
             data_user=customized_user_data,
@@ -124,9 +124,7 @@ class UserService:
         )
         # проверка на существование
         user = await self.get_user_by_social_or_email(
-            uow=uow,
-            email=test_data_user.email,
-            provider_user_id=test_data_user.user_id
+            uow=uow, email=test_data_user.email, provider_user_id=test_data_user.user_id
         )
         if user is not None:
             jwt = await JWTService().create_jwt(
@@ -134,9 +132,7 @@ class UserService:
                 user=user,
             )
             return jwt
-        user = await self.create_user(
-            uow=uow, new_user=customized_user_data
-        )
+        user = await self.create_user(uow=uow, new_user=customized_user_data)
         email = await EmailService().create_email(
             uow=uow,
             data_user=customized_user_data,
@@ -154,7 +150,6 @@ class UserService:
         )
         return jwt
 
-
     async def get_access_key_from_oauth_service(
         self,
         url: str,
@@ -169,6 +164,6 @@ class UserService:
             )
             response_data = response.json()
             access_token = response_data.get("access_token", False)
-            
+
             if access_token:
                 return access_token

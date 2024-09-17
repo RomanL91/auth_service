@@ -55,21 +55,23 @@ class SettingGoogleAuth(BaseModel):
     def get_headers(self, access_token):
         self.headers.update({"Authorization": f"Bearer {access_token}"})
         return self.headers
-    
+
 
 class SettingVKAuth(BaseModel):
     # TODO .env
     vk_client_id: int = 52285386
-    vk_base_url: str = "https://id.vk.com/authorize?response_type=code&client_id=52285386&redirect_uri={vk_redirect_url}&state={state}&code_challenge={code_challenge}&code_challenge_method=s256&scope=email"
-    vk_redirect_url: str = "https://google_oauth2_test.serveo.net/auth_api/v1/auth_user/auth/vk"
+    vk_base_url: str = (
+        "https://id.vk.com/authorize?response_type=code&client_id=52285386&redirect_uri={vk_redirect_url}&state={state}&code_challenge={code_challenge}&code_challenge_method=s256&scope=email"
+    )
+    vk_redirect_url: str = (
+        "https://google_oauth2_test.serveo.net/auth_api/v1/auth_user/auth/vk"
+    )
     vk_token_url: str = "https://id.vk.com/oauth2/auth"
     vk_user_info_url: str = "https://id.vk.com/oauth2/user_info"
-    headers: dict = {
-        "Content-Type": "application/x-www-form-urlencoded"
-    }
+    headers: dict = {"Content-Type": "application/x-www-form-urlencoded"}
     # инфа для post запроса на vk_token_url для получения токенов от ВК
     _data_post_request_to_receive_keys: dict = {
-        "grant_type":"authorization_code",
+        "grant_type": "authorization_code",
         "code_verifier": None,
         "redirect_uri": vk_redirect_url,
         "code": None,

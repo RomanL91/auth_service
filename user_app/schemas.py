@@ -20,11 +20,15 @@ class User(BaseModel):
         Field(
             ...,
             description="Уникальный ID пользователя.",
-        )
+        ),
     ] = uuid4()
-    first_name: Annotated[str | None, Field(..., description="Имя пользователя."),] = None
+    first_name: Annotated[
+        str | None,
+        Field(..., description="Имя пользователя."),
+    ] = None
     last_name: Annotated[
-        str | None, Field(..., description="Фамилия пользователя."),
+        str | None,
+        Field(..., description="Фамилия пользователя."),
     ] = None
     active: Annotated[
         bool | None,

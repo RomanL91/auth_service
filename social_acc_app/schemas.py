@@ -6,15 +6,19 @@ from pydantic import BaseModel, EmailStr, HttpUrl, UUID4
 class LinkToAuthenticationForm(BaseModel):
     url: HttpUrl
 
+
 class ParametersOAuthForm(BaseModel):
     code: str
+
 
 class GoogleForm(ParametersOAuthForm):
     pass
 
+
 class VKForm(ParametersOAuthForm):
     device_id: str
     state: str
+
 
 class DataUserForMyService(BaseModel):
     id: UUID4
@@ -24,6 +28,7 @@ class DataUserForMyService(BaseModel):
     provider: str
     provider_user_id: str
     ava: HttpUrl
+
 
 class OAuth2GoogleUrl(BaseModel):
     url: HttpUrl

@@ -1,4 +1,3 @@
-
 from httpx import AsyncClient
 
 from fastapi import APIRouter, status
@@ -42,14 +41,10 @@ async def login_vk():
     )
 
     async with AsyncClient() as client:
-        response = await client.get(
-            link_to_VK_authentication_form
-        )
+        response = await client.get(link_to_VK_authentication_form)
     if response.status_code == 302:
-        redirect_url = response.headers.get('location')
-        return {
-            "url": redirect_url
-        }
+        redirect_url = response.headers.get("location")
+        return {"url": redirect_url}
     return {f"No redirect, status code": {response.status_code}}
 
 
@@ -65,5 +60,5 @@ async def login_vk():
         данные профиля пользователя, сохранены в систему, созданы JWT.
     """,
 )
-async def auth_vk(uow: UOF_Depends, params: ParamsVK_Depends ):
+async def auth_vk(uow: UOF_Depends, params: ParamsVK_Depends):
     return await UserService().auth_vk(uow=uow, params=params)
