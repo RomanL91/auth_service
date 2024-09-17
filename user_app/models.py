@@ -9,7 +9,7 @@ from core.function_utils import get_current_time
 
 
 class UserT(Base):
-    firt_name: Mapped[str] = mapped_column(
+    first_name: Mapped[str] = mapped_column(
         String(100),
     )
     last_name: Mapped[str] = mapped_column(
@@ -63,7 +63,7 @@ class UserT(Base):
     )
 
     def __str__(self):
-        return f"id={self.id}, name={self.firt_name!r})"
+        return f"id={self.id}, name={self.first_name!r})"
 
     def __repr__(self):
         return str(self)
