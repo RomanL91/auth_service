@@ -33,7 +33,7 @@ class SettingGoogleAuth(BaseModel):
     # google_redirect_url: str = "https://googleoauth2test.serveo.net/auth_api/v1/auth_user/auth/google"
     google_token_url: str = "https://accounts.google.com/o/oauth2/token"
     google_user_info_url: str = "https://www.googleapis.com/oauth2/v1/userinfo"
-    data_post: dict = {
+    _data_post: dict = {
         "code": None,
         "client_id": google_client_id,
         "client_secret": google_client_secret,
@@ -42,13 +42,62 @@ class SettingGoogleAuth(BaseModel):
     }
     headers: dict = {"Authorization": None}
 
-    def get_data_to_post(self, code):
-        self.data_post.update({"code": code})
-        return self.data_post
+    # Геттер для data_post
+    @property
+    def data_post(self):
+        return self._data_post
+
+    # Сеттер для data_post
+    @data_post.setter
+    def data_post(self, values: dict):
+        self._data_post.update(values)
 
     def get_headers(self, access_token):
         self.headers.update({"Authorization": f"Bearer {access_token}"})
         return self.headers
+    
+
+class SettingVKAuth(BaseModel):
+    # TODO .env
+    vk_client_id: int = 52285386
+    vk_base_url: str = "https://id.vk.com/authorize?response_type=code&client_id=52285386&redirect_uri={vk_redirect_url}&state={state}&code_challenge={code_challenge}&code_challenge_method=s256&scope=email"
+    vk_redirect_url: str = "https://google_oauth2_test.serveo.net/auth_api/v1/auth_user/auth/vk"
+    vk_token_url: str = "https://id.vk.com/oauth2/auth"
+    vk_user_info_url: str = "https://id.vk.com/oauth2/user_info"
+    headers: dict = {
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+    # инфа для post запроса на vk_token_url для получения токенов от ВК
+    _data_post_request_to_receive_keys: dict = {
+        "grant_type":"authorization_code",
+        "code_verifier": None,
+        "redirect_uri": vk_redirect_url,
+        "code": None,
+        "client_id": vk_client_id,
+        "device_id": None,
+        "state": None,
+    }
+    _information_post_request_to_obtain_user_data: dict = {
+        "access_token": None,
+        "client_id": vk_client_id,
+    }
+
+    # Геттер для data_post_request_to_receive_keys
+    @property
+    def data_post_request_to_receive_keys(self):
+        return self._data_post_request_to_receive_keys
+
+    # Сеттер для data_post_request_to_receive_keys
+    @data_post_request_to_receive_keys.setter
+    def data_post_request_to_receive_keys(self, values: dict):
+        self._data_post_request_to_receive_keys["code_verifier"] = values["state"]
+        self._data_post_request_to_receive_keys.update(values)
+
+    def get_data_payload(self, access_token):
+        self._information_post_request_to_obtain_user_data.update(
+            {"access_token": access_token}
+        )
+        return self._information_post_request_to_obtain_user_data
 
 
 class SettingsDataBase(BaseModel):
@@ -67,6 +116,8 @@ class Settings(BaseSettings):
     auth_jwt: SettingsAuth = SettingsAuth()
     # == Google Auth
     google_auth: SettingGoogleAuth = SettingGoogleAuth()
+    # == VK Auth
+    vk_auth: SettingVKAuth = SettingVKAuth()
 
 
 settings = Settings()
