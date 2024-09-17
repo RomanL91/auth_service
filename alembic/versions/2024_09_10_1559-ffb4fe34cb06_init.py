@@ -55,7 +55,7 @@ def upgrade() -> None:
     )
     op.create_table(
         "userts",
-        sa.Column("firt_name", sa.String(length=100), nullable=False),
+        sa.Column("first_name", sa.String(length=100), nullable=False),
         sa.Column("last_name", sa.String(length=100), nullable=False),
         sa.Column("update_at", sa.DateTime(), nullable=True),
         sa.Column("last_login", sa.DateTime(), nullable=True),
