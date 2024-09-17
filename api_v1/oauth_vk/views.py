@@ -66,4 +66,4 @@ async def login_vk():
     """,
 )
 async def auth_vk(uow: UOF_Depends, params: ParamsVK_Depends ):
-    return UserService().auth_vk(uow=uow, params=params)
+    return await UserService().auth_vk(uow=uow, params=params)

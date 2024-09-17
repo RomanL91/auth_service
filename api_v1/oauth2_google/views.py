@@ -51,4 +51,4 @@ async def login_google():
     """,
 )
 async def auth_google(uow: UOF_Depends, code: CodeFromGoogle_Depends):
-    return await UserService().auth_google(uow=uow, data=code)
+    return await UserService().auth_google(uow=uow, data_google_form=code)
