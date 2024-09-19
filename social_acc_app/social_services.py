@@ -38,3 +38,16 @@ class SocialService:
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=e,  # TODO пока что показываем ошибки
                 )
+        
+    async def get_social_acc_by_provider_and_user_id(
+        self,
+        uow: IUnitOfWork,
+        provider: str,
+        user_id: str,
+    ):
+        async with uow:
+            social_accont = await uow.social.get_social_acc_by_provider_and_user_id(
+                provider=provider,
+                user_id=user_id,
+            )
+            return social_accont
