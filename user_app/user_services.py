@@ -18,6 +18,7 @@ from jwt_app.jwt_services import JWTService
 from email_app.email_services import EmailService
 from social_acc_app.social_services import SocialService
 
+from user_app import strategy as Strategy
 from user_app.adapter import UserFactoryAdapter
 
 
@@ -83,74 +84,78 @@ class UserService:
             email=data_user_from_google.email,
             provider_user_id=data_user_from_google.id,
         )
-        if user is not None:
-            jwt = await JWTService().create_jwt(
-                uow=uow,
-                user=user,
+        if user:
+            strategy = Strategy.ExistingUserStrategy(
+                jwt_service=JWTService(), 
+                social_service=SocialService(),
             )
-            return jwt
-        user = await self.create_user(uow=uow, new_user=customized_user_data)
-        email = await EmailService().create_email(
-            uow=uow,
-            data_user=customized_user_data,
-            user_id=user.id,
-        )
-        social = await SocialService().create_social_acc(
-            uow=uow,
-            data_user=customized_user_data,
-            user_id=user.id,
-            email_id=email.id,
-        )
-        jwt = await JWTService().create_jwt(
-            uow=uow,
-            user=user,
-        )
+            context_user_data = {
+                "user": user,
+                # "data_user": data_user_from_google,
+                "customized_user_data": customized_user_data
+            }
+        else:
+            strategy = Strategy.NewUserStrategy(
+                email_service=EmailService(), 
+                user_service=UserService(), 
+                jwt_service=JWTService(), 
+                social_service=SocialService(),
+            )
+            context_user_data = {
+                "customized_user_data": customized_user_data
+            }
+        # Выполняем выбранную стратегию
+        auth_context = Strategy.AuthContext(strategy)
+        jwt = await auth_context.execute(uow=uow, user_data=context_user_data)
         return jwt
 
     async def auth_vk(self, uow: IUnitOfWork, params: VKForm) -> JWTokensResponse:
         data_form_vk = params.model_dump()
         settings.vk_auth.data_post_request_to_receive_keys = data_form_vk
-        test_access_vk = await self.get_access_key_from_oauth_service(
+        access_vk = await self.get_access_key_from_oauth_service(
             url=settings.vk_auth.vk_token_url,
             headers=settings.vk_auth.headers,
             payload_template=settings.vk_auth.data_post_request_to_receive_keys,
         )
         # получение инфы о пользователе
-        test_data_user = await UserFactoryAdapter.fetch_user_info(
+        data_user_from_vk = await UserFactoryAdapter.fetch_user_info(
             url=settings.vk_auth.vk_user_info_url,
-            data=settings.vk_auth.get_data_payload(test_access_vk),
+            data=settings.vk_auth.get_data_payload(access_vk),
             request_method="POST",
         )
         # адаптирую для БД сервиса
         customized_user_data = UserFactoryAdapter.create_user(
-            data=test_data_user, source="vk"
+            data=data_user_from_vk, source="vk"
         )
         # проверка на существование
         user = await self.get_user_by_social_or_email(
-            uow=uow, email=test_data_user.email, provider_user_id=test_data_user.user_id
+            uow=uow, 
+            email=data_user_from_vk.email, 
+            provider_user_id=data_user_from_vk.user_id,
         )
-        if user is not None:
-            jwt = await JWTService().create_jwt(
-                uow=uow,
-                user=user,
+        if user:
+            strategy = Strategy.ExistingUserStrategy(
+                jwt_service=JWTService(), 
+                social_service=SocialService(),
             )
-            return jwt
-        user = await self.create_user(uow=uow, new_user=customized_user_data)
-        email = await EmailService().create_email(
-            uow=uow,
-            data_user=customized_user_data,
-            user_id=user.id,
-        )
-        social = await SocialService().create_social_acc(
-            uow=uow,
-            data_user=customized_user_data,
-            user_id=user.id,
-            email_id=email.id,
-        )
-        jwt = await JWTService().create_jwt(
-            uow=uow,
-            user=user,
-        )
+            context_user_data = {
+                "user": user,
+                # "data_user": data_user_from_vk,
+                "customized_user_data": customized_user_data
+            }
+        else:
+            strategy = Strategy.NewUserStrategy(
+                email_service=EmailService(), 
+                user_service=UserService(), 
+                jwt_service=JWTService(), 
+                social_service=SocialService(),
+            )
+            context_user_data = {
+                "customized_user_data": customized_user_data
+            }
+        # Выполняем выбранную стратегию
+        auth_context = Strategy.AuthContext(strategy)
+        jwt = await auth_context.execute(uow=uow, user_data=context_user_data)
         return jwt
 
     async def get_access_key_from_oauth_service(
