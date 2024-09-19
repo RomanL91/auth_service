@@ -39,7 +39,7 @@ class UserRepository(SQLAlchemyRepository):
     ):
         # Строим запрос к таблице пользователей с объединением email и social_accounts
         stmt = (
-            select(UserT)
+            select(UserT).distinct(UserT.id)
             .join(Email)  # Соединяем таблицу email
             .join(SocialAccount)  # Соединяем таблицу социальных аккаунтов
             .filter(
@@ -52,5 +52,4 @@ class UserRepository(SQLAlchemyRepository):
         )
         # Выполняем запрос
         result = await self.session.execute(stmt)
-        user = result.scalar_one_or_none()  # Возвращаем одного пользователя или None
-        return user
+        return result.scalar_one_or_none()
