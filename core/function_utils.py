@@ -1,4 +1,5 @@
 import string
+import random
 
 from datetime import datetime
 from random import choices
@@ -31,6 +32,17 @@ def generate_code_challenge(code_verifier: str) -> str:
     sha256_code = sha256(code_verifier.encode("utf-8")).digest()
     # Преобразуем в Base64 без символов '=', '+' и '/'
     return urlsafe_b64encode(sha256_code).rstrip(b"=").decode("utf-8")
+
+
+# ===========================================================
+# ===========================================================
+# для генерации случайного 6-значного кода
+def generate_six_digit_code() -> str:
+    # Генерируем случайное число от 100000 до 999999
+    random_number = random.randint(100000, 999999)
+    # Преобразуем его в строку и форматируем с дефисом посередине
+    code = f"{str(random_number)[:3]}-{str(random_number)[3:]}"
+    return code
 
 
 # ===========================================================
