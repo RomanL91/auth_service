@@ -22,12 +22,12 @@ class VKForm(ParametersOAuthForm):
 
 class DataUserForMyService(BaseModel):
     id: UUID4
-    first_name: str
-    last_name: str
-    email: EmailStr
-    provider: str
-    provider_user_id: str
-    ava: HttpUrl
+    first_name: str | None
+    last_name: str | None
+    email: EmailStr | None
+    provider: str | None
+    provider_user_id: str | None
+    ava: HttpUrl | None
 
 
 class OAuth2GoogleUrl(BaseModel):
