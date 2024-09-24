@@ -86,24 +86,22 @@ class UserService:
         )
         if user:
             strategy = Strategy.ExistingUserStrategy(
-                jwt_service=JWTService(), 
+                jwt_service=JWTService(),
                 social_service=SocialService(),
             )
             context_user_data = {
                 "user": user,
                 # "data_user": data_user_from_google,
-                "customized_user_data": customized_user_data
+                "customized_user_data": customized_user_data,
             }
         else:
             strategy = Strategy.NewUserStrategy(
-                email_service=EmailService(), 
-                user_service=UserService(), 
-                jwt_service=JWTService(), 
+                email_service=EmailService(),
+                user_service=UserService(),
+                jwt_service=JWTService(),
                 social_service=SocialService(),
             )
-            context_user_data = {
-                "customized_user_data": customized_user_data
-            }
+            context_user_data = {"customized_user_data": customized_user_data}
         # Выполняем выбранную стратегию
         auth_context = Strategy.AuthContext(strategy)
         jwt = await auth_context.execute(uow=uow, user_data=context_user_data)
@@ -129,30 +127,28 @@ class UserService:
         )
         # проверка на существование
         user = await self.get_user_by_social_or_email(
-            uow=uow, 
-            email=data_user_from_vk.email, 
+            uow=uow,
+            email=data_user_from_vk.email,
             provider_user_id=data_user_from_vk.user_id,
         )
         if user:
             strategy = Strategy.ExistingUserStrategy(
-                jwt_service=JWTService(), 
+                jwt_service=JWTService(),
                 social_service=SocialService(),
             )
             context_user_data = {
                 "user": user,
                 # "data_user": data_user_from_vk,
-                "customized_user_data": customized_user_data
+                "customized_user_data": customized_user_data,
             }
         else:
             strategy = Strategy.NewUserStrategy(
-                email_service=EmailService(), 
-                user_service=UserService(), 
-                jwt_service=JWTService(), 
+                email_service=EmailService(),
+                user_service=UserService(),
+                jwt_service=JWTService(),
                 social_service=SocialService(),
             )
-            context_user_data = {
-                "customized_user_data": customized_user_data
-            }
+            context_user_data = {"customized_user_data": customized_user_data}
         # Выполняем выбранную стратегию
         auth_context = Strategy.AuthContext(strategy)
         jwt = await auth_context.execute(uow=uow, user_data=context_user_data)
