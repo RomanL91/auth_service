@@ -55,7 +55,7 @@ class SQLAlchemyRepository(AbstractRepository):
         except NoResultFound:
             return None
 
-    async def update_obj(self, obj_id: int, data: dict):
+    async def update_obj(self, obj_id: str, data: dict):
         stmt = (
             update(self.model).values(**data).filter_by(id=obj_id).returning(self.model)
         )
