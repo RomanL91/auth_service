@@ -13,8 +13,16 @@ def validate_phone_number(value: str) -> str:
 
 
 class PhoneNumberSchemaResponse(BaseModel):
+    model_config = ConfigDict(
+        populate_by_name=True,
+        strict=True,
+        json_schema_extra={
+            "example": {
+                "id": "2cdb7fba2050471792632ebe72bf0267",
+            }
+        },
+    )
     id: UUID4
-    phone_number: str
 
 
 # Pydantic модель для телефонных номеров
@@ -22,11 +30,10 @@ class PhoneNumberSchema(BaseModel):
     model_config = ConfigDict(
         populate_by_name=True,
         strict=True,
-        schema_extra={
+        json_schema_extra={
             "example": {
-                "country_code": "+1",
+                "country_code": "+7",
                 "number": "1234567890",
-                "formatted_number": "+1 123-456-7890",
             }
         },
     )
