@@ -32,3 +32,26 @@ class SMSCodeSchema(BaseModel):
     phone_number_id: Annotated[
         UUID4, Field(..., description="ID телефонного номера, к которому привязан код.")
     ]
+
+
+class SMSCOdeSchemaForm(BaseModel):
+    model_config = ConfigDict(
+        strict=True,
+    )
+    code: Annotated[
+        str,
+        Field(
+            ...,
+            min_length=7,
+            max_length=7,
+            pattern=r"^\d{3}-\d{3}$",
+            description="6-значный код в формате XXX-XXX.",
+        ),
+    ]
+    phone_number_id: Annotated[
+        UUID4, 
+        Field(
+            ..., 
+            description="ID телефонного номера, к которому привязан код.",
+        )
+    ]
