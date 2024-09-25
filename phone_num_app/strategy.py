@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from smsc_api import SMSC
 from core.BASE_unit_of_work import IUnitOfWork
 from core.function_utils import generate_six_digit_code
 
@@ -8,6 +9,7 @@ from phone_num_app.schemas import PhoneNumberSchemaResponse
 
 
 class AuthStrategy(ABC):
+    sms = SMSC()
     @abstractmethod
     async def authenticate(
         self,
@@ -15,6 +17,16 @@ class AuthStrategy(ABC):
         user_data: dict,
     ) -> SMSCodeSchema:
         pass
+
+           
+    def send_sms(self, phone_number: str, code: str, sender: str = "sms",):
+        msg = f"test: {code}" # TODO вынести в настройки
+        phone_number = phone_number.replace('+', '').replace('-', '')
+        self.sms.send_sms(
+            phones=phone_number,
+            message=msg,
+            sender=sender,
+        )
 
 
 class ExistingPhoneStrategy(AuthStrategy):
@@ -33,7 +45,9 @@ class ExistingPhoneStrategy(AuthStrategy):
             uow=uow,
             data=data,
         )
-        return phone_data.phone_number, sms_code
+        phone_num = phone_data.phone_number
+        self.send_sms(phone_number=phone_data.phone_number, code=sms_code)
+        return PhoneNumberSchemaResponse(id=phone_data.id)
 
 
 class NewPhoneStrategy(AuthStrategy):
@@ -63,7 +77,8 @@ class NewPhoneStrategy(AuthStrategy):
             uow=uow,
             data=data,
         )
-        return phone.phone_number, sms_code
+        self.send_sms(phone_number=phone_data.formatted_number, code=sms_code)
+        return PhoneNumberSchemaResponse(id=phone.id)
 
 
 class AuthContext:
