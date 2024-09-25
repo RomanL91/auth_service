@@ -29,7 +29,7 @@ class PhoneService:
             await uow.commit()
             return user
 
-    async def auth_phone(self, uow: IUnitOfWork, data_request_body: PhoneNumberSchema):
+    async def login_phone(self, uow: IUnitOfWork, data_request_body: PhoneNumberSchema):
         phone = await self.get_phone(
             uow=uow, phone_number=data_request_body.formatted_number
         )
@@ -48,5 +48,5 @@ class PhoneService:
             context = phone
 
         auth_context = Strategy.AuthContext(strategy=strategy)
-        sms = await auth_context.execute(uow=uow, data=context)
-        return sms
+        phone_id = await auth_context.execute(uow=uow, data=context)
+        return phone_id
