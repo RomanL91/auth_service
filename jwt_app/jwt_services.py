@@ -1,3 +1,4 @@
+import uuid
 import jwt
 from datetime import datetime, timedelta
 
@@ -7,7 +8,7 @@ from core.BASE_unit_of_work import IUnitOfWork
 
 # == Exceptions
 from fastapi import HTTPException, status
-from sqlalchemy.exc import IntegrityError, NoResultFound
+from sqlalchemy.exc import IntegrityError
 
 # == Schemas
 from jwt_app.schemas import JWTokensCreate, JWTokenSchema
@@ -15,6 +16,25 @@ from user_app.schemas import SaveUserSchema
 
 
 class JWTService:
+    # TODO Нужен рефактор, повторы кода/функционала
+    def generate_jwt(self, **payload):
+        token = jwt_util.encode_jwt(payload)
+        return token
+    
+    async def generate_and_save_jwt(self, uow: IUnitOfWork, **payload):
+        token = self.generate_jwt(**payload)
+        data_token = token.model_dump()
+        async with uow:
+            try:
+                jwt_token = await uow.jwt.create_obj(data_token)
+                await uow.commit()
+                return token
+            except IntegrityError as e:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=e,  # TODO показываем ошибки клиентской стороне для отладки, потом скрываем
+                )
+
     def generate_access_and_refresh_jwt(
         self,
         user: SaveUserSchema,
@@ -103,6 +123,9 @@ class JWTUtil:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid JWT token"
             )
+        
+    def convet_str_to_uuid(self, user_id: str):
+        return uuid.UUID(user_id)
 
 
 jwt_util = JWTUtil(settings=SettingsAuth())
