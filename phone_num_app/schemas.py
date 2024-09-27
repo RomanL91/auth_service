@@ -62,3 +62,18 @@ class PhoneNumberSchema(BaseModel):
         self.formatted_number = f"{self.country_code}-{self.number[:3]}-{self.number[3:6]}-{self.number[6:]}"
         # Валидация поля number
         self.number = validate_phone_number(self.number)
+
+
+class PhoneNumberSchemaToUserDetail(BaseModel):
+    model_config = ConfigDict(
+        populate_by_name=True,
+        strict=True,
+        json_schema_extra={
+            "example": {
+                "id": "2cdb7fba2050471792632ebe72bf0267",
+                "phone_number": "+7-771-474-8717",
+            }
+        },
+    )
+    id: UUID4 | None
+    phone_number: str | None
