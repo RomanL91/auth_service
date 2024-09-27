@@ -1,3 +1,4 @@
+import uuid
 import httpx
 
 # == Core
@@ -9,7 +10,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError
 
 # == Schemas
-from user_app.schemas import User
+from user_app.schemas import User, UserDetailSchema
 from social_acc_app.schemas import GoogleForm, VKForm, DataUserForMyService
 from jwt_app.schemas import JWTokensResponse
 
@@ -35,6 +36,13 @@ class UserService:
 
     exclude = ("email", "ava", "provider_user_id", "provider")
 
+    async def get_user_details(self, uow: IUnitOfWork, user_id: str): # возможно схема для детальной инфы о пользователе
+        user_uuid = uuid.UUID(user_id)
+        async with uow:
+            user_detail = await uow.user.get_user_details(user_id=user_uuid)
+            user_info = UserDetailSchema.model_validate(user_detail)
+            return user_info
+        
     async def get_user_by_socia_id(self, uow: IUnitOfWork, social_id: str) -> User:
         async with uow:
             return await uow.user.get_user_by_social_id(social_id)
