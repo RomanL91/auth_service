@@ -30,7 +30,7 @@ class SettingGoogleAuth(BaseModel):
     )
     google_client_secret: str = "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"
     google_redirect_url: str = "http://localhost:8001/auth_api/v1/auth_user/auth/google"
-    # google_redirect_url: str = "https://googleoauth2test.serveo.net/auth_api/v1/auth_user/auth/google"
+    # google_redirect_url: str = "https://https://google_oauth2_test.serveo.net/auth_api/v1/auth_user/auth/google"
     google_token_url: str = "https://accounts.google.com/o/oauth2/token"
     google_user_info_url: str = "https://www.googleapis.com/oauth2/v1/userinfo"
     _data_post: dict = {
