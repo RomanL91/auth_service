@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from pydantic import BaseModel, EmailStr, HttpUrl, UUID4
+from pydantic import BaseModel, ConfigDict, EmailStr, HttpUrl, UUID4
 
 
 class LinkToAuthenticationForm(BaseModel):
@@ -68,3 +68,20 @@ class SocialAccountSchema(BaseModel):
     provider_user_id: str
     user_id: UUID4
     email_id: UUID4
+
+
+class SocialAccountSchemaToUserDetail(BaseModel):
+    model_config = ConfigDict(
+        populate_by_name=True,
+        strict=True,
+        json_schema_extra={
+            "example": {
+                "id": "2cdb7fba2050471792632ebe72bf0267",
+                "provider": "google",
+                "provider_user_id": "110046581139282355571",
+            }
+        },
+    )
+    id: UUID4
+    provider: str
+    provider_user_id: str
