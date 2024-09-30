@@ -1,4 +1,7 @@
+import os
+
 from pytz import timezone as tz
+from dotenv import load_dotenv
 
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -10,6 +13,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 BASE_DIR = Path(__file__).parent.parent
+
+load_dotenv() # какой-то не красивый вызов... TODO
 
 
 class SettingsAuth(BaseModel):
@@ -27,14 +32,12 @@ class SettingsAuth(BaseModel):
 
 class SettingGoogleAuth(BaseModel):
     # TODO .env
-    google_client_id: str = (
-        "512775846808-npmspbusn7tep886ej4je4n88jrvmqrl.apps.googleusercontent.com"
-    )
-    google_client_secret: str = "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"
-    google_redirect_url: str = "http://localhost:8001/auth_api/v1/auth_user/auth/google"
+    google_client_id: str = os.getenv("GOOGLE_CLIENT_ID")
+    google_client_secret: str = os.getenv("GOOGLE_CLIENT_SECRET")
+    google_redirect_url: str = os.getenv("GOOGLE_REDIRECT_URL")
     # google_redirect_url: str = "https://https://google_oauth2_test.serveo.net/auth_api/v1/auth_user/auth/google"
-    google_token_url: str = "https://accounts.google.com/o/oauth2/token"
-    google_user_info_url: str = "https://www.googleapis.com/oauth2/v1/userinfo"
+    google_token_url: str = os.getenv("GOOGLE_TOKEN_URL")
+    google_user_info_url: str = os.getenv("GOOGLE_USER_INFO_URL")
     _data_post: dict = {
         "code": None,
         "client_id": google_client_id,
