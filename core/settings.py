@@ -6,6 +6,8 @@ from zoneinfo import ZoneInfo
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings
 
+from fastapi.middleware.cors import CORSMiddleware
+
 
 BASE_DIR = Path(__file__).parent.parent
 
@@ -107,6 +109,17 @@ class SettingsDataBase(BaseModel):
     echo: bool = True  # Для дебага
 
 
+class SettingsCORSMiddleware(BaseModel):
+    origins: list[str] = ["http://localhost", "http://localhost:3000"]
+    middleware: dict = {
+        "middleware_class": CORSMiddleware,
+        "allow_origins": origins,
+        "allow_credentials": True,
+        "allow_methods": ["*"],
+        "allow_headers": ["*"],
+    }
+
+
 class Settings(BaseSettings):
 
     # == Other
@@ -120,6 +133,8 @@ class Settings(BaseSettings):
     google_auth: SettingGoogleAuth = SettingGoogleAuth()
     # == VK Auth
     vk_auth: SettingVKAuth = SettingVKAuth()
+    # == CORSMiddleware
+    middleware: SettingsCORSMiddleware = SettingsCORSMiddleware()
 
 
 settings = Settings()
