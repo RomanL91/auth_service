@@ -99,7 +99,7 @@ class JWTUtil:
             payload=payload, key=self.private_key, algorithm=self.algorithm
         )
         token = JWTokenSchema(
-            user_id=payload.get("user_id"),
+            user_id=self.convet_str_to_uuid(payload.get("user_id")),
             issued_at=now,
             expires_at=expire,
             token_type=payload.get("type", "unknown"),
