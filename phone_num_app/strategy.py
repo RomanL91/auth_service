@@ -10,6 +10,7 @@ from phone_num_app.schemas import PhoneNumberSchemaResponse
 
 class AuthStrategy(ABC):
     sms = SMSC()
+
     @abstractmethod
     async def authenticate(
         self,
@@ -18,10 +19,14 @@ class AuthStrategy(ABC):
     ) -> SMSCodeSchema:
         pass
 
-           
-    def send_sms(self, phone_number: str, code: str, sender: str = "sms",):
-        msg = f"test: {code}" # TODO вынести в настройки
-        phone_number = phone_number.replace('+', '').replace('-', '')
+    def send_sms(
+        self,
+        phone_number: str,
+        code: str,
+        sender: str = "sms",
+    ):
+        msg = f"test: {code}"  # TODO вынести в настройки
+        phone_number = phone_number.replace("+", "").replace("-", "")
         self.sms.send_sms(
             phones=phone_number,
             message=msg,

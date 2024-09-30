@@ -24,7 +24,7 @@ class User(BaseModel):
         Field(
             ...,
             description="Уникальный ID пользователя.",
-            examples=["ea17b167-4c86-4998-856f-ba2ae775d953"]
+            examples=["ea17b167-4c86-4998-856f-ba2ae775d953"],
         ),
     ] = uuid4()
     first_name: Annotated[

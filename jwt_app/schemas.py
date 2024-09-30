@@ -28,8 +28,8 @@ class JWTokenSchema(BaseModel):
 class JWT(BaseModel):
     # token: str
     token: str = Field(
-        ..., 
-        description="JWT токен", 
+        ...,
+        description="JWT токен",
         example="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDNiYjNkOTQtNGZjOC00MjYzLTg5OTItZjk4ZDNhODU5NDM0IiwidHlwZSI6ImFjY2Vzc190b2tlbiIsImV4cCI6MTcyNzQxNjk2OCwiaWF0IjoxNzI3NDE2NjY4fQ.go4FmVy1ysV4Xxe7ysTrFIjZf2tujantBWE-uP7amHgcQWv8pYR-rDYCB_EnDpQMJtRes-QjsNTDA430mBbM6kjMM-UcbYti89iT9ZQnUZGuuwSoVbTw-lwjquzcCz9cuXWOzdNynk-Gtbdjh2--rWYE2NC5U3R5LJWL2OaoIbWSMYqMJn8PVgzhSSqJfKNhczjdzVF5v5HK8lfZBg2Dj9nSMULOGeplbWeHcyoAPmLkDqiF-6cRii-zplTtL89fajBd4ldDJiZPtQ3LCASHpiMgNjdQN5E7oZ4NdtRzXIFXskKLpc7bsWElR_XKBhYpqtyrs41PpdUxFdxSLGVHkQ",
     )
 

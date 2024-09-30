@@ -11,7 +11,6 @@ from jwt_app.schemas import JWTokensResponse
 from phone_num_app.schemas import PhoneNumberSchema, PhoneNumberSchemaResponse
 
 
-
 router = APIRouter(tags=["phone"])
 
 
@@ -26,8 +25,12 @@ router = APIRouter(tags=["phone"])
         Возращает ID записи.
     """,
 )
-async def login_phone(uow: UOF_Depends, phone_num_schema: PhoneNumberSchema) -> PhoneNumberSchemaResponse:
-    phone_id = await PhoneService().login_phone(uow=uow, data_request_body=phone_num_schema)
+async def login_phone(
+    uow: UOF_Depends, phone_num_schema: PhoneNumberSchema
+) -> PhoneNumberSchemaResponse:
+    phone_id = await PhoneService().login_phone(
+        uow=uow, data_request_body=phone_num_schema
+    )
     return phone_id
 
 
@@ -47,18 +50,23 @@ async def login_phone(uow: UOF_Depends, phone_num_schema: PhoneNumberSchema) -> 
     responses={
         204: {
             "description": "code или phone_number_id не актуальны или не были найдены.",
-            "content": {
-                "application/json": {
-                    "example": None
-                }
-            },
+            "content": {"application/json": {"example": None}},
         }
-    }
+    },
 )
-async def auth_phone(uow: UOF_Depends, sms_code_form: SMSCode_Depends,  response: Response):
-    code = await SMSService().chec_sms_code(uow=uow, code=sms_code_form.code, phone_number_id=sms_code_form.phone_number_id,)
+async def auth_phone(
+    uow: UOF_Depends, sms_code_form: SMSCode_Depends, response: Response
+):
+    code = await SMSService().chec_sms_code(
+        uow=uow,
+        code=sms_code_form.code,
+        phone_number_id=sms_code_form.phone_number_id,
+    )
     # немного логики в представлении
     if code:
-        return await SMSService().mark_code_as_used_and_issued_tokens(uow=uow, sms_code_id=code.id,)
+        return await SMSService().mark_code_as_used_and_issued_tokens(
+            uow=uow,
+            sms_code_id=code.id,
+        )
     response.status_code = status.HTTP_204_NO_CONTENT
     return None

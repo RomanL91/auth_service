@@ -76,7 +76,7 @@ class UserRepository(SQLAlchemyRepository):
 
             # Форматируем результат в словарь или другую структуру
             # у меня есть UserDetailSchema и по сути результат запроса в БД
-            # можно сразу преобразовывать и валидировать в эту модель, но я 
+            # можно сразу преобразовывать и валидировать в эту модель, но я
             # решил делать это уровнем позже, а тут возвращать словарь
             user_data = {
                 "user": {
@@ -88,7 +88,9 @@ class UserRepository(SQLAlchemyRepository):
                     "external_id": user.external_id,
                     "client_uuid": user.client_uuid,
                 },
-                "emails": [{"id": email.id, "email": email.email} for email in user.emails],
+                "emails": [
+                    {"id": email.id, "email": email.email} for email in user.emails
+                ],
                 "social_accounts": [
                     {
                         "id": sa.id,
@@ -99,8 +101,10 @@ class UserRepository(SQLAlchemyRepository):
                 ],
                 "phone_number": {
                     "id": user.phone_number.id if user.phone_number else None,
-                    "phone_number": user.phone_number.phone_number if user.phone_number else None,
-                }
+                    "phone_number": (
+                        user.phone_number.phone_number if user.phone_number else None
+                    ),
+                },
             }
 
             return user_data

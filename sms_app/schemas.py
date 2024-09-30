@@ -49,9 +49,9 @@ class SMSCOdeSchemaForm(BaseModel):
         ),
     ]
     phone_number_id: Annotated[
-        UUID4, 
+        UUID4,
         Field(
-            ..., 
+            ...,
             description="ID телефонного номера, к которому привязан код.",
-        )
+        ),
     ]

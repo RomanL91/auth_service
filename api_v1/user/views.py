@@ -28,21 +28,15 @@ router = APIRouter(tags=["user"])
     responses={
         400: {
             "description": "Получил это - высока вероятность, что отдаешь не тот тип ключа.",
-            "content": {
-                "application/json": {
-                    "example": "Invalid token type"
-                }
-            },
+            "content": {"application/json": {"example": "Invalid token type"}},
         },
         401: {
             "description": "Это значит, что ключ 'битый' и не проходит проверку или же просто 'протух'.",
             "content": {
-                "application/json": {
-                    "example": "Invalid token type | Token expired"
-                }
+                "application/json": {"example": "Invalid token type | Token expired"}
             },
-        }
-    }
+        },
+    },
 )
 async def get_user_info(uow: UOF_Depends, token: JWT) -> UserDetailSchema:
     result_decode = jwt_util.decode_jwt(jwt_key=token.token)
@@ -57,6 +51,7 @@ async def get_user_info(uow: UOF_Depends, token: JWT) -> UserDetailSchema:
         )
     # запрос к БД о доступной информации о пользователе
     user_detail = await UserService().get_user_details(
-        uow=uow, user_id=user_id,
+        uow=uow,
+        user_id=user_id,
     )
     return user_detail

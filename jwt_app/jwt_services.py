@@ -20,7 +20,7 @@ class JWTService:
     def generate_jwt(self, **payload):
         token = jwt_util.encode_jwt(payload)
         return token
-    
+
     async def generate_and_save_jwt(self, uow: IUnitOfWork, **payload):
         token = self.generate_jwt(**payload)
         data_token = token.model_dump()
@@ -123,7 +123,7 @@ class JWTUtil:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid JWT token"
             )
-        
+
     def convet_str_to_uuid(self, user_id: str):
         return uuid.UUID(user_id)
 

@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 BASE_DIR = Path(__file__).parent.parent
 
-load_dotenv() # какой-то не красивый вызов... TODO
+load_dotenv()  # какой-то не красивый вызов... TODO
 
 
 class SettingsAuth(BaseModel):
