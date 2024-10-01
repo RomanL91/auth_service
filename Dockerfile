@@ -18,4 +18,4 @@ EXPOSE 8999
 RUN chmod +x /app/entrypoint.sh
 
 # Устанавливаем скрипт как точку входа
-ENTRYPOINT ["/app/entrypoint.sh"]
+# ENTRYPOINT ["/app/entrypoint.sh"]
