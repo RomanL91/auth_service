@@ -19,10 +19,10 @@ class SMSCodeSchema(BaseModel):
         str,
         Field(
             ...,
-            min_length=6,
-            max_length=6,
-            pattern=r"^\d{3}-\d{3}$",
-            description="6-значный код в формате XXX-XXX.",
+            min_length=4,
+            max_length=4,
+            pattern=r"^\d{4}$",
+            description="4-значный код в формате XXXX.",
         ),
     ]
     is_used: Annotated[
@@ -42,10 +42,10 @@ class SMSCOdeSchemaForm(BaseModel):
         str,
         Field(
             ...,
-            min_length=7,
-            max_length=7,
-            pattern=r"^\d{3}-\d{3}$",
-            description="6-значный код в формате XXX-XXX.",
+            min_length=4,
+            max_length=4,
+            pattern=r"^\d{4}$",
+            description="4-значный код в формате XXXX.",
         ),
     ]
     phone_number_id: Annotated[
