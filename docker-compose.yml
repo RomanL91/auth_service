@@ -5,5 +5,5 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8999:8999"
-    entrypoint: ["/app/entrypoint.sh"]
+    # entrypoint: ["/app/entrypoint.sh"]
     command: python main.py
