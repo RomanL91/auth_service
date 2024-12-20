@@ -1,9 +1,16 @@
 services:
   app:
+    container_name: auth_service
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "8999:8999"
+    networks:
+      - backend
     # entrypoint: ["/app/entrypoint.sh"]
     command: python main.py
+
+networks:
+  backend:
+    external: true

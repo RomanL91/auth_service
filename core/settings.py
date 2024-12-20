@@ -113,7 +113,11 @@ class SettingsDataBase(BaseModel):
 
 
 class SettingsCORSMiddleware(BaseModel):
-    origins: list[str] = ["http://localhost", "http://localhost:3000"]
+    origins: list[str] = [
+        "http://localhost",
+        "http://localhost:3000",
+        "http://localhost:8000",
+    ]
     middleware: dict = {
         "middleware_class": CORSMiddleware,
         "allow_origins": origins,

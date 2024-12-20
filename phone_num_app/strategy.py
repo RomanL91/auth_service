@@ -25,7 +25,7 @@ class AuthStrategy(ABC):
         code: str,
         sender: str = "sms",
     ):
-        msg = f"test: {code}"  # TODO вынести в настройки
+        msg = f"Код авторизации: {code} SCK-1.KZ"  # TODO вынести в настройки
         phone_number = phone_number.replace("+", "").replace("-", "")
         self.sms.send_sms(
             phones=phone_number,

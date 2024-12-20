@@ -8,7 +8,7 @@ from api_v1.api_dependencies import UOF_Depends
 
 # === Schemas
 from jwt_app.schemas import JWT
-from user_app.schemas import UserDetailSchema
+from user_app.schemas import UserDetailSchema, UpdateUserSchema
 
 
 router = APIRouter(tags=["user"])
@@ -55,3 +55,20 @@ async def get_user_info(uow: UOF_Depends, token: JWT) -> UserDetailSchema:
         user_id=user_id,
     )
     return user_detail
+
+
+@router.patch(
+    "/pach",
+)
+async def user_patch(uow: UOF_Depends, update_data: UpdateUserSchema):
+    result_decode = jwt_util.decode_jwt(jwt_key=update_data.token.token)
+    # если не выпали ошибки при decode_jwt достаем из результата ИД пользователя и тип токена
+    user_id = result_decode.get("user_id", None)
+    token_type = result_decode.get("type", None)
+    # если тип токена не access, то и в БД не ходим
+    if token_type != jwt_util.access_token_type:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid token type",
+        )
+    await UserService().update_user_info(uow=uow, update_data=update_data)

@@ -1,10 +1,11 @@
 from uuid import uuid4
 from typing import Annotated, List
-from pydantic import BaseModel, ConfigDict, Field, UUID4
+from pydantic import BaseModel, ConfigDict, Field, UUID4, EmailStr
 
 from email_app.schemas import EmailSchemaToUserDetail
 from social_acc_app.schemas import SocialAccountSchemaToUserDetail
 from phone_num_app.schemas import PhoneNumberSchemaToUserDetail
+from jwt_app.schemas import JWT
 
 
 class SaveUserSchema(BaseModel):
@@ -49,3 +50,33 @@ class UserDetailSchema(BaseModel):
     emails: List[EmailSchemaToUserDetail]
     social_accounts: List[SocialAccountSchemaToUserDetail]
     phone_number: PhoneNumberSchemaToUserDetail
+
+
+class UpdateUserSchema(BaseModel):
+    token: JWT
+    email: EmailStr | None = None
+    phone_number: Annotated[
+        str | None,
+        Field(
+            ..., 
+            pattern=r"^(?:\+7|8)\d{10}$",
+            description="Телефонный номер.", 
+            examples=["+77714748717"],
+        ),
+    ] = None
+    first_name: Annotated[
+        str | None,
+        Field(
+            ..., 
+            description="Имя пользователя.", 
+            examples=["Роман"],
+        ),
+    ] = None
+    last_name: Annotated[
+        str | None,
+        Field(
+            ..., 
+            description="Фамилия пользователя.", 
+            examples=["Лебедев"],
+        ),
+    ] = None
