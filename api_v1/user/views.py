@@ -71,4 +71,5 @@ async def user_patch(uow: UOF_Depends, update_data: UpdateUserSchema):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid token type",
         )
+    return "бля забыл сделать"
     await UserService().update_user_info(uow=uow, update_data=update_data)
